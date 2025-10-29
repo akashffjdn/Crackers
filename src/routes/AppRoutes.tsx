@@ -37,6 +37,8 @@ const AdminSettings = lazy(() => import('../pages/admin/AdminSettings'));
 const AdminProfile = lazy(() => import('../pages/admin/AdminProfile'));
 const CategoryManagement = lazy(() => import('../pages/admin/CategoryManagement'));
 const FestivalCollectionsManagement = lazy(() => import('../pages/admin/FestivalCollectionsManagement'));
+const ForgotPasswordPage = lazy(() => import('../pages/ForgotPasswordPage'));
+const ResetPasswordPage = lazy(() => import('../pages/ResetPasswordPage'));
 
 
 const AppRoutes: React.FC = () => {
@@ -60,6 +62,8 @@ const AppRoutes: React.FC = () => {
         {/* Auth Routes */}
         <Route path="/login" element={<ProtectedRoute requireAuth={false}><LoginPage /></ProtectedRoute>} />
         <Route path="/signup" element={<ProtectedRoute requireAuth={false}><SignupPage /></ProtectedRoute>} />
+        <Route path="/forgot-password" element={<ProtectedRoute requireAuth={false}><ForgotPasswordPage /></ProtectedRoute>} />
+        <Route path="/reset-password/:token" element={<ProtectedRoute requireAuth={false}><ResetPasswordPage /></ProtectedRoute>} />
 
         {/* Protected User Routes */}
         <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
