@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Define your backend API base URL
 const API_BASE_URL = 'https://crackers-backend-xmdc.onrender.com/api'; // Make sure backend runs on 5001
-// const API_BASE_URL = 'http://localhost:5001/api'
+//const API_BASE_URL = 'http://localhost:5001/api'
 
 // Create an axios instance
 const api = axios.create({
