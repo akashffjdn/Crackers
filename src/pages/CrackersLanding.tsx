@@ -10,14 +10,25 @@ import Footer from '../components/Footer';
 
 const CrackersLanding: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-50 to-red-50">
+    <div className="min-h-screen bg-gradient-to-b from-orange-50/50 via-white to-gray-50/50">
       <Header />
-      <main>
+      <main className="relative">
+        {/* Hero Section - Full Viewport */}
         <Hero />
+        
+        {/* Categories Section */}
         <Categories />
+        
+        {/* Features Section */}
         <Features />
+        
+        {/* About Section */}
         <About />
+        
+        {/* Testimonials Section */}
         <Testimonials />
+        
+        {/* CTA Section */}
         <CTA />
       </main>
       <Footer />
