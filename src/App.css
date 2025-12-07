@@ -6,33 +6,10 @@
 }
 
 .grid-item {
-  background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
+  background-color: #4caf50;
   color: white;
   padding: 20px;
   text-align: center;
   font-weight: bold;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
-  transition: all 0.3s ease;
-}
-
-.grid-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5);
-}
-
-/* Smooth page transitions */
-.page-transition {
-  animation: fadeIn 0.5s ease-in;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  border-radius: 8px;
 }
