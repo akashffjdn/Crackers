@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   FaBars, 
@@ -11,41 +11,32 @@ import {
   FaSignOutAlt,
   FaCog,
   FaShoppingBag,
-  FaChevronDown,
-  FaHeart
+  FaChevronDown
 } from 'react-icons/fa';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { useContent } from '../context/ContentContext';
+import { useContent } from '../context/ContentContext'; // ✅ Add this import
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const { itemCount } = useCart();
   const { user, isAuthenticated, logout } = useAuth();
-  const { getContentValue } = useContent();
+  const { getContentValue } = useContent(); // ✅ Add this hook
   const navigate = useNavigate();
+// ✅ Get dynamic content with fallbacks - CORRECTED field IDs
+const companyName = getContentValue('companyName') || 'Akash Crackers';
+const companyTagline = getContentValue('companyTagline') || 'Premium Sivakasi Fireworks';
+const supportPhone = getContentValue('supportPhone') || '+918870296456';
+const topBarMessage = getContentValue('headerAnnouncement') || '🎆 Festival Special Offers! Free Delivery on Orders Above ₹2000 🎆';
 
-  const companyName = getContentValue('companyName') || 'Akash Crackers';
-  const companyTagline = getContentValue('companyTagline') || 'Premium Sivakasi Fireworks';
-  const supportPhone = getContentValue('supportPhone') || '+918870296456';
-  const topBarMessage = getContentValue('headerAnnouncement') || '🎆 Festival Special Offers! Free Delivery on Orders Above ₹2000 🎆';
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/shop', label: 'Shop' },
     { href: '/festival-collections', label: 'Collections' },
     { href: '/contact', label: 'Contact' },
-    { href: '/quick-order', label: 'Quick Order' }
+    { href:  '/quick-order', label:'Quick Order'}
   ];
 
   const handleLogout = () => {
@@ -55,284 +46,212 @@ const Header: React.FC = () => {
   };
 
   return (
-    <>
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled 
-          ? 'bg-white/95 backdrop-blur-xl shadow-xl border-b border-gray-200/50' 
-          : 'bg-gradient-to-r from-red-600 via-orange-600 to-red-600'
-      }`}>
-        {/* Top bar */}
-        <div className="bg-gradient-to-r from-red-700 to-orange-700 text-center py-2 text-sm font-medium animate-pulse-slow">
-          <p className="text-white">{topBarMessage}</p>
-        </div>
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            {/* Logo */}
-            <Link to="/" className="flex items-center space-x-3 group">
-              <div className="relative">
-                <div className="absolute inset-0 bg-yellow-400 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity"></div>
-                <div className="relative bg-gradient-to-br from-yellow-400 to-orange-400 text-red-700 p-3 rounded-full font-bold text-xl shadow-lg transform group-hover:scale-110 transition-transform duration-300">
-                  🎇
-                </div>
-              </div>
-              <div>
-                <h1 className={`text-2xl font-bold font-display transition-colors ${
-                  scrolled ? 'text-gray-900' : 'text-white'
-                }`}>
-                  {companyName}
-                </h1>
-                <p className={`text-xs transition-colors ${
-                  scrolled ? 'text-gray-600' : 'text-orange-100'
-                }`}>
-                  {companyTagline}
-                </p>
-              </div>
-            </Link>
+    <header className="bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg sticky top-0 z-50">
+      {/* Top bar */}
+      <div className="bg-red-700 text-center py-2 text-sm">
+        <p>{topBarMessage}</p> {/* ✅ Dynamic announcement message */}
+      </div>
+      
+      <div className="max-w-7xl mx-auto px-4 py-4">
+        <div className="flex items-center justify-between">
+          {/* Logo */}
+          <Link to="/" className="flex items-center space-x-3">
+            <div className="bg-yellow-400 text-red-600 p-2 rounded-full font-bold text-xl">
+              🎇
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold">{companyName}</h1> {/* ✅ Dynamic company name */}
+              <p className="text-xs text-orange-200">{companyTagline}</p> {/* ✅ Dynamic tagline */}
+            </div>
+          </Link>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center space-x-1">
-              {navLinks.map(link => (
-                <Link
-                  key={link.href}
-                  to={link.href}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 relative group ${
-                    scrolled 
-                      ? 'text-gray-700 hover:text-red-600 hover:bg-red-50' 
-                      : 'text-white hover:text-yellow-300 hover:bg-white/10'
-                  }`}
-                >
-                  {link.label}
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-yellow-400 group-hover:w-full transition-all duration-300"></span>
-                </Link>
-              ))}
-              
-              <div className="flex items-center space-x-3 ml-4 pl-4 border-l border-white/20">
-                {/* Call Now Button */}
-                <a 
-                  href={`tel:${supportPhone}`}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-300 transform hover:scale-105 shadow-lg ${
-                    scrolled
-                      ? 'bg-gradient-to-r from-red-600 to-orange-600 text-white hover:from-red-700 hover:to-orange-700'
-                      : 'bg-yellow-400 text-red-700 hover:bg-yellow-300'
-                  }`}
-                >
-                  <FaPhone />
-                  <span className="hidden xl:inline">Call Now</span>
-                </a>
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-8">
+            {navLinks.map(link => (
+              <Link
+                key={link.href}
+                to={link.href}
+                className="hover:text-yellow-300 transition-colors font-medium"
+              >
+                {link.label}
+              </Link>
+            ))}
+            
+            <div className="flex items-center space-x-4">
+              {/* Call Now Button */}
+              <a 
+                href={`tel:${supportPhone}`} /* ✅ Dynamic phone number */
+                className="flex items-center space-x-1 bg-yellow-500 text-red-700 px-3 py-2 rounded-full text-sm font-semibold hover:bg-yellow-400 transition-colors"
+              >
+                <FaPhone />
+                <span>Call Now</span>
+              </a>
 
-                {/* Shopping Cart */}
-                <Link 
-                  to="/cart" 
-                  className={`relative p-3 rounded-xl transition-all duration-300 transform hover:scale-110 ${
-                    scrolled
-                      ? 'text-gray-700 hover:bg-red-50 hover:text-red-600'
-                      : 'text-white hover:bg-white/10'
-                  }`}
-                >
-                  <FaShoppingCart className="text-xl" />
-                  {itemCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-full w-6 h-6 text-xs flex items-center justify-center font-bold shadow-lg animate-bounce">
-                      {itemCount}
-                    </span>
-                  )}
-                </Link>
-
-                {/* Authentication Section */}
-                {isAuthenticated && user ? (
-                  <div className="relative">
-                    <button
-                      onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                      className={`flex items-center space-x-2 px-4 py-2 rounded-xl transition-all duration-300 ${
-                        scrolled
-                          ? 'bg-gray-100 hover:bg-gray-200 text-gray-900'
-                          : 'bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm'
-                      }`}
-                    >
-                      <div className={`rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm shadow-md ${
-                        scrolled
-                          ? 'bg-gradient-to-br from-red-500 to-orange-500 text-white'
-                          : 'bg-yellow-400 text-red-700'
-                      }`}>
-                        {user.firstName.charAt(0)}{user.lastName.charAt(0)}
-                      </div>
-                      <span className="font-medium text-sm hidden xl:block">
-                        {user.firstName}
-                      </span>
-                      <FaChevronDown className={`text-xs transition-transform ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
-                    </button>
-
-                    {/* Dropdown Menu */}
-                    {isProfileDropdownOpen && (
-                      <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 z-50 animate-slide-down overflow-hidden">
-                        <div className="px-4 py-4 bg-gradient-to-r from-red-50 to-orange-50 border-b border-gray-100">
-                          <p className="font-bold text-gray-900">{user.firstName} {user.lastName}</p>
-                          <p className="text-sm text-gray-600">{user.email}</p>
-                        </div>
-                        
-                        <div className="py-2">
-                          <Link
-                            to="/dashboard"
-                            onClick={() => setIsProfileDropdownOpen(false)}
-                            className="flex items-center space-x-3 px-4 py-3 hover:bg-red-50 transition-colors group"
-                          >
-                            <FaUser className="text-blue-500 group-hover:scale-110 transition-transform" />
-                            <span className="text-gray-700 font-medium">My Account</span>
-                          </Link>
-                          
-                          <Link
-                            to="/dashboard"
-                            onClick={() => setIsProfileDropdownOpen(false)}
-                            className="flex items-center space-x-3 px-4 py-3 hover:bg-red-50 transition-colors group"
-                          >
-                            <FaShoppingBag className="text-green-500 group-hover:scale-110 transition-transform" />
-                            <span className="text-gray-700 font-medium">My Orders</span>
-                          </Link>
-
-                          {user.role === 'admin' && (
-                            <Link
-                              to="/admin/dashboard"
-                              onClick={() => setIsProfileDropdownOpen(false)}
-                              className="flex items-center space-x-3 px-4 py-3 hover:bg-red-50 transition-colors group"
-                            >
-                              <FaCog className="text-purple-500 group-hover:scale-110 transition-transform" />
-                              <span className="text-gray-700 font-medium">Admin Panel</span>
-                            </Link>
-                          )}
-                          
-                          <div className="border-t border-gray-200 my-2"></div>
-                          
-                          <button
-                            onClick={handleLogout}
-                            className="flex items-center space-x-3 px-4 py-3 hover:bg-red-50 transition-colors w-full text-left text-red-600 group"
-                          >
-                            <FaSignOutAlt className="group-hover:scale-110 transition-transform" />
-                            <span className="font-medium">Sign Out</span>
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex items-center space-x-2">
-                    <Link
-                      to="/login"
-                      className={`px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
-                        scrolled
-                          ? 'text-gray-700 hover:text-red-600 hover:bg-red-50'
-                          : 'text-white hover:text-yellow-300 hover:bg-white/10'
-                      }`}
-                    >
-                      <span className="hidden xl:inline">Login</span>
-                      <FaSignInAlt className="xl:hidden" />
-                    </Link>
-                    
-                    <Link
-                      to="/signup"
-                      className={`px-4 py-2 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 ${
-                        scrolled
-                          ? 'bg-gradient-to-r from-red-600 to-orange-600 text-white hover:from-red-700 hover:to-orange-700'
-                          : 'bg-white text-red-600 hover:bg-yellow-50'
-                      } shadow-lg`}
-                    >
-                      <span className="hidden xl:inline">Sign Up</span>
-                      <FaUserPlus className="xl:hidden" />
-                    </Link>
-                  </div>
+              {/* Shopping Cart */}
+              <Link to="/cart" className="relative hover:text-yellow-300 transition-colors">
+                <FaShoppingCart className="text-xl" />
+                {itemCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-yellow-400 text-red-600 rounded-full w-5 h-5 text-xs flex items-center justify-center font-bold animate-pulse">
+                    {itemCount}
+                  </span>
                 )}
-              </div>
-            </nav>
+              </Link>
 
-            {/* Mobile menu button */}
-            <button
-              className={`lg:hidden p-2 rounded-xl transition-all duration-300 ${
-                scrolled ? 'text-gray-700 hover:bg-gray-100' : 'text-white hover:bg-white/10'
-              }`}
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              {isMenuOpen ? <FaTimes className="text-2xl" /> : <FaBars className="text-2xl" />}
-            </button>
-          </div>
+              {/* Authentication Section */}
+              {isAuthenticated && user ? (
+                /* User Profile Dropdown */
+                <div className="relative">
+                  <button
+                    onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                    className="flex items-center space-x-2 bg-white/10 hover:bg-white/20 px-3 py-2 rounded-full transition-colors"
+                  >
+                    <div className="bg-yellow-400 text-red-600 rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">
+                      {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+                    </div>
+                    <span className="font-medium text-sm">
+                      {user.firstName}
+                    </span>
+                    <FaChevronDown className={`text-xs transition-transform ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  {isProfileDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-56 bg-white text-gray-800 rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                      <div className="px-4 py-3 border-b border-gray-200">
+                        <p className="font-semibold">{user.firstName} {user.lastName}</p>
+                        <p className="text-sm text-gray-500">{user.email}</p>
+                      </div>
+                      
+                      <div className="py-1">
+                        <Link
+                          to="/dashboard"
+                          onClick={() => setIsProfileDropdownOpen(false)}
+                          className="flex items-center space-x-3 px-4 py-2 hover:bg-gray-100 transition-colors"
+                        >
+                          <FaUser className="text-blue-500" />
+                          <span>My Account</span>
+                        </Link>
+                        
+                        <Link
+                          to="/dashboard"
+                          onClick={() => setIsProfileDropdownOpen(false)}
+                          className="flex items-center space-x-3 px-4 py-2 hover:bg-gray-100 transition-colors"
+                        >
+                          <FaShoppingBag className="text-green-500" />
+                          <span>My Orders</span>
+                        </Link>
+
+                        {user.role === 'admin' && (
+                          <Link
+                            to="/admin/dashboard"
+                            onClick={() => setIsProfileDropdownOpen(false)}
+                            className="flex items-center space-x-3 px-4 py-2 hover:bg-gray-100 transition-colors"
+                          >
+                            <FaCog className="text-purple-500" />
+                            <span>Admin Panel</span>
+                          </Link>
+                        )}
+                        
+                        <div className="border-t border-gray-200 my-1"></div>
+                        
+                        <button
+                          onClick={handleLogout}
+                          className="flex items-center space-x-3 px-4 py-2 hover:bg-gray-100 transition-colors w-full text-left text-red-600"
+                        >
+                          <FaSignOutAlt />
+                          <span>Sign Out</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                /* Login/Signup Buttons */
+                <div className="flex items-center space-x-3">
+                  <Link
+                    to="/login"
+                    className="flex items-center space-x-1 text-white hover:text-yellow-300 transition-colors font-medium"
+                  >
+                    <FaSignInAlt />
+                    <span>Login</span>
+                  </Link>
+                  
+                  <Link
+                    to="/signup"
+                    className="flex items-center space-x-1 bg-white text-red-600 px-3 py-2 rounded-full font-semibold hover:bg-yellow-100 transition-colors"
+                  >
+                    <FaUserPlus />
+                    <span>Sign Up</span>
+                  </Link>
+                </div>
+              )}
+            </div>
+          </nav>
+
+          {/* Mobile menu button */}
+          <button
+            className="md:hidden text-2xl"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? <FaTimes /> : <FaBars />}
+          </button>
         </div>
 
         {/* Mobile Navigation */}
-        <div className={`lg:hidden transition-all duration-300 overflow-hidden ${
-          isMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
-        }`}>
-          <nav className={`px-4 pb-6 border-t ${
-            scrolled ? 'border-gray-200 bg-white' : 'border-white/20 bg-white/5 backdrop-blur-md'
-          }`}>
-            <div className="flex flex-col space-y-2 pt-4">
+        {isMenuOpen && (
+          <nav className="md:hidden mt-4 pb-4 border-t border-red-500 pt-4 animate-fade-in-down">
+            <div className="flex flex-col space-y-3">
+              {/* Navigation Links */}
               {navLinks.map(link => (
                 <Link
                   key={link.href}
                   to={link.href}
-                  className={`px-4 py-3 rounded-xl font-medium transition-all ${
-                    scrolled
-                      ? 'text-gray-700 hover:bg-red-50 hover:text-red-600'
-                      : 'text-white hover:bg-white/10'
-                  }`}
+                  className="hover:text-yellow-300 transition-colors font-medium py-2"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {link.label}
                 </Link>
               ))}
               
-              <div className="flex flex-col space-y-2 pt-4 border-t border-white/20">
+              {/* Mobile Actions */}
+              <div className="flex flex-col space-y-3 pt-3 border-t border-red-500">
+                {/* Call Button */}
                 <a 
-                  href={`tel:${supportPhone}`}
-                  className="flex items-center justify-center space-x-2 bg-gradient-to-r from-red-600 to-orange-600 text-white px-4 py-3 rounded-xl font-semibold hover:from-red-700 hover:to-orange-700 transition-all shadow-lg"
-                  onClick={() => setIsMenuOpen(false)}
+                  href={`tel:${supportPhone}`} /* ✅ Dynamic phone number */
+                  className="flex items-center space-x-2 bg-yellow-500 text-red-700 px-4 py-3 rounded-full font-semibold w-fit hover:bg-yellow-400 transition-colors"
                 >
                   <FaPhone />
                   <span>Call Now</span>
                 </a>
                 
+                {/* Cart */}
                 <Link 
                   to="/cart" 
-                  className={`flex items-center justify-center space-x-2 px-4 py-3 rounded-xl font-medium transition-all ${
-                    scrolled
-                      ? 'text-gray-700 hover:bg-red-50 hover:text-red-600'
-                      : 'text-white hover:bg-white/10'
-                  }`}
+                  className="flex items-center space-x-2 text-yellow-300 hover:text-yellow-100 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <FaShoppingCart />
                   <span>Cart ({itemCount})</span>
                 </Link>
 
+                {/* Authentication Section */}
                 {isAuthenticated && user ? (
-                  <div className="space-y-2 pt-2 border-t border-white/20">
-                    <div className={`px-4 py-3 rounded-xl ${
-                      scrolled ? 'bg-gray-50' : 'bg-white/10'
-                    }`}>
-                      <div className="flex items-center space-x-3">
-                        <div className={`rounded-full w-10 h-10 flex items-center justify-center font-bold ${
-                          scrolled
-                            ? 'bg-gradient-to-br from-red-500 to-orange-500 text-white'
-                            : 'bg-yellow-400 text-red-700'
-                        }`}>
-                          {user.firstName.charAt(0)}{user.lastName.charAt(0)}
-                        </div>
-                        <div>
-                          <p className={`font-semibold ${scrolled ? 'text-gray-900' : 'text-white'}`}>
-                            {user.firstName} {user.lastName}
-                          </p>
-                          <p className={`text-xs ${scrolled ? 'text-gray-600' : 'text-orange-200'}`}>
-                            {user.email}
-                          </p>
-                        </div>
+                  /* Mobile User Menu */
+                  <div className="space-y-3 pt-3 border-t border-red-500">
+                    <div className="flex items-center space-x-3 text-yellow-300">
+                      <div className="bg-yellow-400 text-red-600 rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">
+                        {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+                      </div>
+                      <div>
+                        <p className="font-semibold">{user.firstName} {user.lastName}</p>
+                        <p className="text-xs text-orange-200">{user.email}</p>
                       </div>
                     </div>
                     
                     <Link
                       to="/dashboard"
                       onClick={() => setIsMenuOpen(false)}
-                      className={`flex items-center space-x-2 px-4 py-3 rounded-xl font-medium transition-all ${
-                        scrolled
-                          ? 'text-gray-700 hover:bg-red-50 hover:text-red-600'
-                          : 'text-white hover:bg-white/10'
-                      }`}
+                      className="flex items-center space-x-2 text-white hover:text-yellow-300 transition-colors py-2"
                     >
                       <FaUser />
                       <span>My Account</span>
@@ -342,11 +261,7 @@ const Header: React.FC = () => {
                       <Link
                         to="/admin/dashboard"
                         onClick={() => setIsMenuOpen(false)}
-                        className={`flex items-center space-x-2 px-4 py-3 rounded-xl font-medium transition-all ${
-                          scrolled
-                            ? 'text-gray-700 hover:bg-red-50 hover:text-red-600'
-                            : 'text-white hover:bg-white/10'
-                        }`}
+                        className="flex items-center space-x-2 text-white hover:text-yellow-300 transition-colors py-2"
                       >
                         <FaCog />
                         <span>Admin Panel</span>
@@ -358,26 +273,19 @@ const Header: React.FC = () => {
                         handleLogout();
                         setIsMenuOpen(false);
                       }}
-                      className={`flex items-center space-x-2 px-4 py-3 rounded-xl font-medium transition-all w-full text-left ${
-                        scrolled
-                          ? 'text-red-600 hover:bg-red-50'
-                          : 'text-red-200 hover:bg-white/10'
-                      }`}
+                      className="flex items-center space-x-2 text-red-200 hover:text-white transition-colors py-2"
                     >
                       <FaSignOutAlt />
                       <span>Sign Out</span>
                     </button>
                   </div>
                 ) : (
-                  <div className="flex flex-col space-y-2 pt-2 border-t border-white/20">
+                  /* Mobile Login/Signup */
+                  <div className="flex flex-col space-y-3 pt-3 border-t border-red-500">
                     <Link
                       to="/login"
                       onClick={() => setIsMenuOpen(false)}
-                      className={`flex items-center justify-center space-x-2 px-4 py-3 rounded-xl font-medium transition-all ${
-                        scrolled
-                          ? 'text-gray-700 hover:bg-red-50 hover:text-red-600'
-                          : 'text-white hover:bg-white/10'
-                      }`}
+                      className="flex items-center space-x-2 text-white hover:text-yellow-300 transition-colors py-2"
                     >
                       <FaSignInAlt />
                       <span>Login</span>
@@ -386,7 +294,7 @@ const Header: React.FC = () => {
                     <Link
                       to="/signup"
                       onClick={() => setIsMenuOpen(false)}
-                      className="flex items-center justify-center space-x-2 bg-gradient-to-r from-red-600 to-orange-600 text-white px-4 py-3 rounded-xl font-semibold hover:from-red-700 hover:to-orange-700 transition-all shadow-lg"
+                      className="flex items-center space-x-2 bg-white text-red-600 px-4 py-3 rounded-full font-semibold w-fit hover:bg-yellow-100 transition-colors"
                     >
                       <FaUserPlus />
                       <span>Sign Up</span>
@@ -396,8 +304,8 @@ const Header: React.FC = () => {
               </div>
             </div>
           </nav>
-        </div>
-      </header>
+        )}
+      </div>
 
       {/* Click outside to close dropdown */}
       {isProfileDropdownOpen && (
@@ -406,10 +314,7 @@ const Header: React.FC = () => {
           onClick={() => setIsProfileDropdownOpen(false)}
         />
       )}
-      
-      {/* Spacer to prevent content from going under fixed header */}
-      <div className="h-20"></div>
-    </>
+    </header>
   );
 };
 

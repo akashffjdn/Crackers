@@ -47,18 +47,12 @@ const dynamicFeatures = getFeatures();
   ];
 
   return (
-    <section className="section-padding bg-gradient-to-br from-red-600 via-orange-600 to-yellow-500 text-white relative overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-20 left-20 text-6xl animate-pulse-slow">✨</div>
-        <div className="absolute bottom-20 right-20 text-6xl animate-pulse-slow" style={{ animationDelay: '1s' }}>🎆</div>
-      </div>
-
-      <div className="container-custom relative z-10">
-        <div className="text-center mb-16 animate-fade-in">
-          <h2 className="text-5xl md:text-6xl font-bold font-display mb-6">{sectionTitle}</h2>
-          <p className="text-xl text-orange-100 max-w-3xl mx-auto leading-relaxed">
-            {sectionSubtitle}
+    <section className="py-20 bg-gradient-to-br from-red-600 via-orange-600 to-yellow-500 text-white">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold mb-4">{sectionTitle}</h2> {/* ✅ Dynamic title */}
+          <p className="text-xl text-orange-100 max-w-3xl mx-auto">
+            {sectionSubtitle} {/* ✅ Dynamic subtitle */}
           </p>
         </div>
 
@@ -66,14 +60,13 @@ const dynamicFeatures = getFeatures();
           {features.map((feature, index) => (
             <div
               key={index}
-              className="text-center glass rounded-3xl p-8 hover:glass-strong transition-all duration-500 transform hover:-translate-y-2 animate-fade-in border border-white/30"
-              style={{ animationDelay: `${index * 0.1}s` }}
+              className="text-center bg-white/10 backdrop-blur-sm rounded-2xl p-8 hover:bg-white/20 transition-all duration-300 border border-white/20"
             >
-              <div className="bg-white rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6 shadow-xl transform group-hover:scale-110 transition-transform">
-                {feature.icon}
+              <div className="bg-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+                {feature.icon} {/* ✅ Dynamic icon */}
               </div>
-              <h3 className="text-xl font-bold font-display mb-4">{feature.title}</h3>
-              <p className="text-orange-100 leading-relaxed">{feature.description}</p>
+              <h3 className="text-xl font-bold mb-4">{feature.title}</h3> {/* ✅ Dynamic title */}
+              <p className="text-orange-100">{feature.description}</p> {/* ✅ Dynamic description */}
             </div>
           ))}
         </div>
