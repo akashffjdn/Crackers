@@ -59,29 +59,6 @@ const CTA: React.FC = () => {
             </Link>
           </div>
         </motion.div>
-
-        {/* Feature highlights - subtle cards */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8"
-        >
-          {[
-            { title: 'Free Delivery', desc: 'On orders above ₹2,000' },
-            { title: '40% Savings', desc: 'Factory direct pricing' },
-            { title: '24/7 Support', desc: 'Expert assistance always' },
-          ].map((item, i) => (
-            <div
-              key={i}
-              className="text-center p-6 rounded-2xl bg-white/[0.02] border border-white/[0.04] hover:border-white/[0.08] hover:bg-white/[0.03] transition-all duration-300"
-            >
-              <h3 className="text-base font-semibold text-white mb-1">{item.title}</h3>
-              <p className="text-sm text-surface-400">{item.desc}</p>
-            </div>
-          ))}
-        </motion.div>
       </div>
     </section>
   );

@@ -99,7 +99,7 @@ const Hero: React.FC = () => {
             </motion.div>
 
             {/* Headline */}
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.1] tracking-tight mb-6">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight mb-6">
               <span className="block text-white drop-shadow-2xl">{currentSlide.title1}</span>
               <span className="block text-white drop-shadow-2xl">{currentSlide.title2}</span>
               <span className="block bg-gradient-to-r from-accent via-[#ff6b7a] to-gold bg-clip-text text-transparent drop-shadow-2xl">
@@ -108,7 +108,7 @@ const Hero: React.FC = () => {
             </h1>
 
             {/* Subtitle */}
-            <p className="text-lg md:text-xl text-white/90 mb-10 leading-relaxed max-w-3xl mx-auto drop-shadow-lg">
+            <p className="text-base md:text-lg text-white/90 mb-10 leading-relaxed max-w-3xl mx-auto drop-shadow-lg">
               {currentSlide.subtitle}
             </p>
 

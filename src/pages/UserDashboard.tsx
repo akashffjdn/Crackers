@@ -472,59 +472,80 @@ const UserDashboard: React.FC = () => {
                                             ) : (
                                                 <div className="p-6 space-y-4">
                                                     {userOrders.map((order) => (
-                                                        <div
+                                                        <motion.div
                                                             key={order.id}
-                                                            className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.06] hover:border-white/[0.12] transition-all duration-300"
+                                                            initial={{ opacity: 0, y: 10 }}
+                                                            animate={{ opacity: 1, y: 0 }}
+                                                            className="rounded-xl bg-white/[0.02] border border-white/[0.08] hover:border-white/[0.12] transition-all duration-300 overflow-hidden"
                                                         >
-                                                            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
-                                                                <div>
-                                                                    <h3 className="font-semibold text-white">
-                                                                        Order #{order.id.substring(0, 8)}...
-                                                                    </h3>
-                                                                    <p className="text-sm text-surface-400 mt-1">
-                                                                        {new Date(order.createdAt).toLocaleDateString()}
-                                                                    </p>
-                                                                </div>
-                                                                <div className="flex items-center gap-3 mt-3 md:mt-0">
-                                                                    <span className={`px-3 py-1.5 rounded-full text-xs font-semibold capitalize ${getStatusColor(order.status)}`}>
-                                                                        {order.status}
-                                                                    </span>
-                                                                    <span className="font-bold text-white">
-                                                                        {formatPriceSimple(order.total)}
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-
-                                                            <div className="flex items-center gap-3 mb-4">
-                                                                {order.items.slice(0, 3).map((item, idx) => (
-                                                                    <img
-                                                                        key={idx}
-                                                                        src={item.product.images[0]}
-                                                                        alt={item.product.name}
-                                                                        className="w-14 h-14 object-cover rounded-lg border border-white/[0.06]"
-                                                                    />
-                                                                ))}
-                                                                {order.items.length > 3 && (
-                                                                    <div className="w-14 h-14 bg-white/[0.05] rounded-lg flex items-center justify-center text-xs font-semibold text-surface-400 border border-white/[0.06]">
-                                                                        +{order.items.length - 3}
+                                                            {/* Compact Order Card */}
+                                                            <div className="p-4">
+                                                                {/* Header Row */}
+                                                                <div className="flex items-center justify-between mb-3">
+                                                                    <div className="flex items-center gap-3">
+                                                                        <div className="w-10 h-10 rounded-lg bg-accent/10 border border-accent/20 flex items-center justify-center flex-shrink-0">
+                                                                            <FaBox className="text-accent text-sm" />
+                                                                        </div>
+                                                                        <div>
+                                                                            <h3 className="font-semibold text-white text-sm">
+                                                                                Order #{order.id.substring(order.id.length - 8)}
+                                                                            </h3>
+                                                                            <p className="text-xs text-surface-400">
+                                                                                {new Date(order.createdAt).toLocaleDateString('en-US', {
+                                                                                    month: 'short',
+                                                                                    day: 'numeric',
+                                                                                    year: 'numeric'
+                                                                                })}
+                                                                            </p>
+                                                                        </div>
                                                                     </div>
-                                                                )}
-                                                            </div>
+                                                                    <div className="flex items-center gap-3">
+                                                                        <span className={`px-3 py-1 rounded-lg text-xs font-semibold capitalize ${getStatusColor(order.status)}`}>
+                                                                            {order.status}
+                                                                        </span>
+                                                                        <span className="font-bold text-white text-sm">
+                                                                            {formatPriceSimple(order.total)}
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
 
-                                                            <div className="flex gap-3">
+                                                                {/* Product Preview */}
+                                                                <div className="flex items-center gap-2 mb-3">
+                                                                    {order.items.slice(0, 1).map((item, idx) => (
+                                                                        <div key={idx} className="relative">
+                                                                            <img
+                                                                                src={item.product.images[0]}
+                                                                                alt={item.product.name}
+                                                                                className="w-12 h-12 object-cover rounded-lg border border-white/[0.08]"
+                                                                            />
+                                                                            {item.quantity > 1 && (
+                                                                                <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent rounded-full flex items-center justify-center text-[10px] font-bold text-white border border-surface-900">
+                                                                                    {item.quantity}
+                                                                                </span>
+                                                                            )}
+                                                                        </div>
+                                                                    ))}
+                                                                    <div className="flex-1 min-w-0">
+                                                                        <p className="text-sm text-surface-300 truncate">
+                                                                            {order.items[0]?.product.name}
+                                                                        </p>
+                                                                        {order.items.length > 1 && (
+                                                                            <p className="text-xs text-surface-500">
+                                                                                +{order.items.length - 1} more items
+                                                                            </p>
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+
+                                                                {/* Track Button */}
                                                                 <Link
                                                                     to={`/orders/${order.id}`}
-                                                                    className="flex-1 text-center bg-accent text-white py-2.5 px-4 rounded-xl text-sm font-semibold hover:shadow-[0_0_20px_rgba(230,57,70,0.3)] transition-all"
+                                                                    className="block w-full text-center bg-accent hover:bg-accent/90 text-white py-2.5 px-4 rounded-lg text-sm font-semibold transition-all duration-200"
                                                                 >
                                                                     Track Order
                                                                 </Link>
-                                                                {order.status === 'delivered' && (
-                                                                    <button className="flex-1 border border-white/[0.12] text-white py-2.5 px-4 rounded-xl text-sm font-semibold hover:bg-white/[0.05] transition-all">
-                                                                        Reorder
-                                                                    </button>
-                                                                )}
                                                             </div>
-                                                        </div>
+                                                        </motion.div>
                                                     ))}
                                                 </div>
                                             )}
@@ -767,57 +788,176 @@ const UserDashboard: React.FC = () => {
             {/* Address Modal */}
             <AnimatePresence>
                 {isAddressFormOpen && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                        <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} className="bg-surface-800 border border-white/[0.12] rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-                            <div className="p-6">
-                                <div className="flex items-center justify-between mb-6">
-                                    <h3 className="text-xl font-bold text-white">{selectedAddress ? 'Edit' : 'Add'} Address</h3>
-                                    <button onClick={() => setIsAddressFormOpen(false)} className="w-8 h-8 rounded-lg hover:bg-white/[0.05] flex items-center justify-center transition-colors">
-                                        <FaTimes className="text-surface-400" />
-                                    </button>
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.95, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.95, y: 20 }}
+                            className="bg-surface-900 border border-white/[0.1] rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+                        >
+                            {/* Header */}
+                            <div className="sticky top-0 bg-surface-900/95 backdrop-blur-sm border-b border-white/[0.08] px-6 py-4 flex items-center justify-between z-10">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center">
+                                        <FaMapMarkerAlt className="text-accent text-sm" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-lg font-bold text-white">{selectedAddress ? 'Edit' : 'Add New'} Address</h3>
+                                        <p className="text-xs text-surface-400">Fill in the delivery details</p>
+                                    </div>
                                 </div>
+                                <button
+                                    onClick={() => setIsAddressFormOpen(false)}
+                                    className="w-9 h-9 rounded-lg hover:bg-white/[0.05] flex items-center justify-center transition-colors group"
+                                >
+                                    <FaTimes className="text-surface-400 group-hover:text-white transition-colors" />
+                                </button>
+                            </div>
 
+                            <div className="p-6">
                                 {addressError && (
-                                    <div className="mb-4 p-4 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl text-sm">{addressError}</div>
+                                    <motion.div
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="mb-5 p-3.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-lg text-sm flex items-center gap-3"
+                                    >
+                                        <span className="text-red-400">⚠</span>
+                                        {addressError}
+                                    </motion.div>
                                 )}
 
-                                <div className="space-y-4">
-                                    {[
-                                        { label: 'Label *', key: 'label', placeholder: 'Home, Office...' },
-                                        { label: 'Name *', key: 'name', placeholder: 'Recipient' },
-                                        { label: 'City *', key: 'city' },
-                                        { label: 'State *', key: 'state' },
-                                        { label: 'Pincode *', key: 'pincode', maxLength: 6 },
-                                        { label: 'Phone *', key: 'phone', type: 'tel' }
-                                    ].map((field) => (
-                                        <div key={field.key}>
-                                            <label className="block text-sm font-medium text-surface-400 mb-2">{field.label}</label>
+                                <div className="space-y-5">
+                                    {/* Label & Name Row */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-xs font-semibold text-surface-400 mb-2 uppercase tracking-wider">
+                                                Label <span className="text-accent">*</span>
+                                            </label>
                                             <input
-                                                type={field.type || 'text'}
-                                                value={addressFormData[field.key as keyof Address] || ''}
-                                                onChange={(e) => setAddressFormData(p => ({ ...p, [field.key]: e.target.value }))}
-                                                placeholder={field.placeholder}
-                                                maxLength={field.maxLength}
-                                                className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white focus:border-accent/40 focus:outline-none focus:ring-2 focus:ring-accent/20 transition-all"
+                                                type="text"
+                                                value={addressFormData.label || ''}
+                                                onChange={(e) => setAddressFormData(p => ({ ...p, label: e.target.value }))}
+                                                placeholder="e.g., Home, Office"
+                                                className="w-full px-4 py-2.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-surface-500 focus:border-accent/40 focus:outline-none focus:ring-2 focus:ring-accent/20 transition-all text-sm"
                                             />
                                         </div>
-                                    ))}
-                                    <div>
-                                        <label className="block text-sm font-medium text-surface-400 mb-2">Street *</label>
-                                        <textarea value={addressFormData.street || ''} onChange={(e) => setAddressFormData(p => ({ ...p, street: e.target.value }))} rows={3} className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white focus:border-accent/40 focus:outline-none focus:ring-2 focus:ring-accent/20 transition-all resize-none" />
+                                        <div>
+                                            <label className="block text-xs font-semibold text-surface-400 mb-2 uppercase tracking-wider">
+                                                Recipient Name <span className="text-accent">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={addressFormData.name || ''}
+                                                onChange={(e) => setAddressFormData(p => ({ ...p, name: e.target.value }))}
+                                                placeholder="Full name"
+                                                className="w-full px-4 py-2.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-surface-500 focus:border-accent/40 focus:outline-none focus:ring-2 focus:ring-accent/20 transition-all text-sm"
+                                            />
+                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-3">
-                                        <input type="checkbox" checked={addressFormData.isDefault || false} onChange={(e) => setAddressFormData(p => ({ ...p, isDefault: e.target.checked }))} className="w-4 h-4 accent-accent border-white/[0.2] rounded" />
-                                        <label className="text-sm text-surface-300">Set as default address</label>
+
+                                    {/* Street Address */}
+                                    <div>
+                                        <label className="block text-xs font-semibold text-surface-400 mb-2 uppercase tracking-wider">
+                                            Street Address <span className="text-accent">*</span>
+                                        </label>
+                                        <textarea
+                                            value={addressFormData.street || ''}
+                                            onChange={(e) => setAddressFormData(p => ({ ...p, street: e.target.value }))}
+                                            rows={2.5}
+                                            placeholder="House/Flat no., Building, Street"
+                                            className="w-full px-4 py-2.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-surface-500 focus:border-accent/40 focus:outline-none focus:ring-2 focus:ring-accent/20 transition-all resize-none text-sm"
+                                        />
+                                    </div>
+
+                                    {/* City, State, Pincode Row */}
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <label className="block text-xs font-semibold text-surface-400 mb-2 uppercase tracking-wider">
+                                                City <span className="text-accent">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={addressFormData.city || ''}
+                                                onChange={(e) => setAddressFormData(p => ({ ...p, city: e.target.value }))}
+                                                placeholder="City"
+                                                className="w-full px-4 py-2.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-surface-500 focus:border-accent/40 focus:outline-none focus:ring-2 focus:ring-accent/20 transition-all text-sm"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-semibold text-surface-400 mb-2 uppercase tracking-wider">
+                                                State <span className="text-accent">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={addressFormData.state || ''}
+                                                onChange={(e) => setAddressFormData(p => ({ ...p, state: e.target.value }))}
+                                                placeholder="State"
+                                                className="w-full px-4 py-2.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-surface-500 focus:border-accent/40 focus:outline-none focus:ring-2 focus:ring-accent/20 transition-all text-sm"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-semibold text-surface-400 mb-2 uppercase tracking-wider">
+                                                Pincode <span className="text-accent">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={addressFormData.pincode || ''}
+                                                onChange={(e) => setAddressFormData(p => ({ ...p, pincode: e.target.value }))}
+                                                placeholder="6 digits"
+                                                maxLength={6}
+                                                className="w-full px-4 py-2.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-surface-500 focus:border-accent/40 focus:outline-none focus:ring-2 focus:ring-accent/20 transition-all text-sm"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Phone */}
+                                    <div>
+                                        <label className="block text-xs font-semibold text-surface-400 mb-2 uppercase tracking-wider">
+                                            Phone Number <span className="text-accent">*</span>
+                                        </label>
+                                        <input
+                                            type="tel"
+                                            value={addressFormData.phone || ''}
+                                            onChange={(e) => setAddressFormData(p => ({ ...p, phone: e.target.value }))}
+                                            placeholder="10 digit mobile number"
+                                            className="w-full px-4 py-2.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-surface-500 focus:border-accent/40 focus:outline-none focus:ring-2 focus:ring-accent/20 transition-all text-sm"
+                                        />
+                                    </div>
+
+                                    {/* Default Checkbox */}
+                                    <div className="flex items-center gap-3 p-4 rounded-lg bg-white/[0.02] border border-white/[0.06]">
+                                        <input
+                                            type="checkbox"
+                                            id="defaultAddress"
+                                            checked={addressFormData.isDefault || false}
+                                            onChange={(e) => setAddressFormData(p => ({ ...p, isDefault: e.target.checked }))}
+                                            className="w-4 h-4 accent-accent border-white/[0.2] rounded cursor-pointer"
+                                        />
+                                        <label htmlFor="defaultAddress" className="text-sm text-surface-300 cursor-pointer flex-1">
+                                            Set as default delivery address
+                                        </label>
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-4 pt-6 mt-6 border-t border-white/[0.06]">
-                                    <button onClick={() => setIsAddressFormOpen(false)} className="flex-1 px-4 py-3 border border-white/[0.12] text-white rounded-xl text-sm font-semibold hover:bg-white/[0.05] transition-all">
+                                {/* Action Buttons */}
+                                <div className="flex items-center gap-3 pt-6 mt-6 border-t border-white/[0.06]">
+                                    <button
+                                        onClick={() => setIsAddressFormOpen(false)}
+                                        className="flex-1 px-4 py-2.5 border border-white/[0.12] text-white rounded-lg text-sm font-semibold hover:bg-white/[0.05] transition-all"
+                                    >
                                         Cancel
                                     </button>
-                                    <button onClick={handleSaveAddress} disabled={isSavingAddress} className="flex-1 px-4 py-3 bg-accent text-white rounded-xl text-sm font-semibold hover:shadow-[0_0_20px_rgba(230,57,70,0.3)] transition-all disabled:opacity-50">
-                                        {isSavingAddress ? <LoadingSpinner size="sm" /> : <>{selectedAddress ? 'Update' : 'Add'}</>}
+                                    <button
+                                        onClick={handleSaveAddress}
+                                        disabled={isSavingAddress}
+                                        className="flex-1 px-4 py-2.5 bg-accent hover:bg-accent/90 text-white rounded-lg text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {isSavingAddress ? 'Saving...' : (selectedAddress ? 'Update Address' : 'Add Address')}
                                     </button>
                                 </div>
                             </div>

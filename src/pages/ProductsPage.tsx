@@ -195,65 +195,12 @@ const ProductsPage: React.FC = () => {
           </motion.div>
 
           <div className="grid lg:grid-cols-4 gap-8">
-            {/* Products Grid */}
-            <div className="lg:col-span-3 lg:order-1">
-              {filteredAndSortedProducts.length > 0 ? (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5, delay: 0.3 }}
-                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-                >
-                  {filteredAndSortedProducts.map((product, index) => (
-                    <ProductCard key={product.id} product={product} index={index} />
-                  ))}
-                </motion.div>
-              ) : (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-center py-16"
-                >
-                  <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-accent/10 border border-accent/30 flex items-center justify-center">
-                    <span className="text-4xl">📦</span>
-                  </div>
-                  <h3 className="text-xl font-bold text-white mb-2">
-                    {categoryHasNoProducts
-                      ? `No Products in ${category?.name}`
-                      : allProductsEmpty
-                      ? 'No Products'
-                      : 'No matches found'}
-                  </h3>
-                  <p className="text-surface-400 mb-8">
-                    {categoryHasNoProducts || allProductsEmpty
-                      ? 'Check back later or browse other categories.'
-                      : 'Try adjusting your filters to find what you\'re looking for.'}
-                  </p>
-                  {!(categoryHasNoProducts || allProductsEmpty) ? (
-                    <button
-                      onClick={clearFilters}
-                      className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-accent text-white font-semibold hover:shadow-[0_0_30px_rgba(230,57,70,0.4)] transition-all duration-300 hover:scale-105"
-                    >
-                      Clear Filters
-                    </button>
-                  ) : (
-                    <Link
-                      to="/shop"
-                      className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-accent text-white font-semibold hover:shadow-[0_0_30px_rgba(230,57,70,0.4)] transition-all duration-300 hover:scale-105"
-                    >
-                      Browse Categories
-                    </Link>
-                  )}
-                </motion.div>
-              )}
-            </div>
-
             {/* Sidebar Filters */}
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
+              initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className={`lg:col-span-1 lg:order-2 ${showFilters ? 'block' : 'hidden lg:block'}`}
+              className={`lg:col-span-1 ${showFilters ? 'block' : 'hidden lg:block'}`}
             >
               <div className="sticky top-24 bg-surface-800/50 border border-surface-700 rounded-xl p-6">
                 <div className="flex items-center justify-between mb-6">
@@ -321,6 +268,59 @@ const ProductsPage: React.FC = () => {
                 </button>
               </div>
             </motion.div>
+
+            {/* Products Grid */}
+            <div className="lg:col-span-3">
+              {filteredAndSortedProducts.length > 0 ? (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                >
+                  {filteredAndSortedProducts.map((product, index) => (
+                    <ProductCard key={product.id} product={product} index={index} />
+                  ))}
+                </motion.div>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-center py-16"
+                >
+                  <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-accent/10 border border-accent/30 flex items-center justify-center">
+                    <span className="text-4xl">📦</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-2">
+                    {categoryHasNoProducts
+                      ? `No Products in ${category?.name}`
+                      : allProductsEmpty
+                      ? 'No Products'
+                      : 'No matches found'}
+                  </h3>
+                  <p className="text-surface-400 mb-8">
+                    {categoryHasNoProducts || allProductsEmpty
+                      ? 'Check back later or browse other categories.'
+                      : 'Try adjusting your filters to find what you\'re looking for.'}
+                  </p>
+                  {!(categoryHasNoProducts || allProductsEmpty) ? (
+                    <button
+                      onClick={clearFilters}
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-accent text-white font-semibold hover:shadow-[0_0_30px_rgba(230,57,70,0.4)] transition-all duration-300 hover:scale-105"
+                    >
+                      Clear Filters
+                    </button>
+                  ) : (
+                    <Link
+                      to="/shop"
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-accent text-white font-semibold hover:shadow-[0_0_30px_rgba(230,57,70,0.4)] transition-all duration-300 hover:scale-105"
+                    >
+                      Browse Categories
+                    </Link>
+                  )}
+                </motion.div>
+              )}
+            </div>
           </div>
         </div>
       </main>
