@@ -1,149 +1,141 @@
-import React , { useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Header from '../components/Header'; //
-import Footer from '../components/Footer'; //
-// Remove static import: import categories from '../data/categories';
-import { useProducts } from '../context/ProductContext'; //
-import { useCategories } from '../context/CategoryContext'; //
-import LoadingSpinner from '../components/LoadingSpinner'; //
-import { FaBox } from 'react-icons/fa'; // Import icon for empty state
+import { motion } from 'framer-motion';
+import { FaArrowRight } from 'react-icons/fa';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import { useProducts } from '../context/ProductContext';
+import { useCategories } from '../context/CategoryContext';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const ShopNow: React.FC = () => {
-  // Get products, categories, AND their loading/error states
   const { products, isLoading: productsLoading, error: productsError, getProductsByCategory } = useProducts();
   const { categories, isLoading: categoriesLoading, error: categoriesError } = useCategories();
   const [showAll, setShowAll] = useState(false);
 
-  // Limit categories displayed
   const displayedCategories = showAll ? categories : categories.slice(0, 9);
   const hasMoreCategories = categories.length > 9;
 
-  // --- LOADING & ERROR HANDLING ---
-  // Show spinner if either categories or products are still loading
   if (categoriesLoading || productsLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col">
+      <div className="min-h-screen bg-surface-900 flex flex-col">
         <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <LoadingSpinner text="Loading categories and products..." />
+        <main className="flex-1 flex items-center justify-center pt-16">
+          <LoadingSpinner text="Loading collections..." />
         </main>
         <Footer />
       </div>
     );
   }
 
-  // Show error message if loading failed for either
   if (categoriesError || productsError) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col">
+      <div className="min-h-screen bg-surface-900 flex flex-col">
         <Header />
-        <main className="flex-1 container mx-auto px-4 py-16 text-center text-red-600">
-          Error loading data: {categoriesError || productsError}
+        <main className="flex-1 max-w-7xl mx-auto px-6 pt-28 text-center">
+          <p className="text-accent">{categoriesError || productsError}</p>
         </main>
         <Footer />
       </div>
     );
   }
-  // --- END LOADING & ERROR HANDLING ---
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-surface-900">
       <Header />
-      <main>
-         <section id="products" className="py-20 bg-white">
-              <div className="max-w-7xl mx-auto px-4">
-                <div className="text-center mb-16">
-                  <h2 className="text-4xl font-bold text-gray-800 mb-4">
-                       Explore Our Crackers Categories
-                  </h2>
-                  <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                     Choose from our wide range of premium quality crackers, carefully crafted in Sivakasi
-              to make your celebrations spectacular and memorable.
-                  </p>
-                  {/* Show total category count */}
-                  <p className="text-sm text-gray-500 mt-2">
-                    {categories.length} Categories Available
-                  </p>
-                </div>
+      <main className="pt-28 pb-20">
+        <div className="max-w-7xl mx-auto px-6">
+          {/* Hero header */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            className="mb-16"
+          >
+            <p className="text-[11px] font-semibold text-accent tracking-[0.2em] uppercase mb-4">Shop</p>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-[-0.02em] leading-[1.05] mb-4">
+              Explore our<br />
+              <span className="bg-gradient-to-r from-accent to-gold bg-clip-text text-transparent">collections.</span>
+            </h1>
+            <p className="text-lg text-surface-400 max-w-xl">
+              Premium crackers crafted in Sivakasi — {categories.length} collections, {products.length}+ products.
+            </p>
+          </motion.div>
 
-                {/* Grid Layout */}
-                {/* Render only if categories have loaded AND are not empty */}
-                {categories.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {displayedCategories.map((category) => {
-                      // **Use the FIXED getProductsByCategory function**
-                      // This now correctly counts products even with populated categoryId
-                      const productCount = getProductsByCategory(category.id).length;
+          {/* Categories Grid */}
+          {categories.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {displayedCategories.map((category: any, index: number) => {
+                const productCount = getProductsByCategory(category.id).length;
 
-                      return (
-                        <Link
-                          key={category.id}
-                          to={`/products/${category.id}`}
-                          className="group bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl p-6 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-orange-100 flex flex-col" // Added flex flex-col for consistent button position
-                        >
-                          <div className="relative overflow-hidden rounded-xl mb-4">
-                            <img
-                              src={category.heroImage}
-                              alt={category.name}
-                              className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop';
-                              }}
-                            />
-                            <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-full p-2 text-2xl">
-                              {category.icon}
-                            </div>
-                            <div className="absolute bottom-4 right-4 bg-red-600 text-white px-2 py-1 rounded text-xs font-semibold">
-                              {/* Display the calculated count */}
-                              {productCount} items
-                            </div>
-                          </div>
+                return (
+                  <motion.div
+                    key={category.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.08 }}
+                  >
+                    <Link
+                      to={`/products/${category.id}`}
+                      className="group block relative overflow-hidden rounded-2xl bg-white/[0.02] border border-white/[0.04] hover:border-white/[0.1] transition-all duration-500 h-full"
+                    >
+                      {/* Image */}
+                      <div className="relative overflow-hidden h-56">
+                        <img
+                          src={category.heroImage}
+                          alt={category.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop';
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-surface-900 via-surface-900/30 to-transparent" />
 
-                          <div className="flex-grow"> {/* Added flex-grow to push button down */}
-                            <h3 className="text-2xl font-bold text-gray-800 mb-2">
-                              {category.name}
-                            </h3>
-                            <p className="text-gray-600 mb-4 line-clamp-3">
-                              {category.description}
-                            </p>
-                          </div>
+                        {/* Product count */}
+                        <span className="absolute top-4 right-4 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-[11px] font-semibold text-white border border-white/[0.1]">
+                          {productCount} items
+                        </span>
+                      </div>
 
-                          <div className="mt-auto w-full bg-gradient-to-r from-red-500 to-orange-500 text-white py-3 rounded-xl font-semibold hover:from-red-600 hover:to-orange-600 transition-all text-center">
-                            View Products
-                          </div>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                 ) : (
-                   // Empty State when categories array is empty AFTER loading
-                   <div className="text-center py-16">
-                     <FaBox className="text-6xl text-gray-400 mx-auto mb-4" /> {/* Use FaBox */}
-                     <h3 className="text-xl font-medium text-gray-900 mb-2">No categories available</h3>
-                     <p className="text-gray-600">
-                       Categories will appear here once they are added by the admin.
-                     </p>
-                   </div>
-                 )}
-
-                {/* View All / Show Less Buttons */}
-                {/* (Keep this section as it was, it depends on categories.length) */}
-                 {hasMoreCategories && !showAll && (
-                   <div className="text-center mt-12">
-                     <button onClick={() => setShowAll(true)} className="...">
-                       View All Categories
-                     </button>
-                   </div>
-                 )}
-                 {showAll && hasMoreCategories && (
-                   <div className="text-center mt-12">
-                     <button onClick={() => setShowAll(false)} className="...">
-                       Show Less Categories
-                     </button>
-                   </div>
-                 )}
+                      {/* Content */}
+                      <div className="p-6">
+                        <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-accent transition-colors duration-300">
+                          {category.name}
+                        </h3>
+                        <p className="text-sm text-surface-400 line-clamp-2 mb-4 leading-relaxed">
+                          {category.description}
+                        </p>
+                        <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent group-hover:gap-2.5 transition-all duration-300">
+                          View Products <FaArrowRight size={10} />
+                        </span>
+                      </div>
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-24">
+              <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center">
+                <span className="text-4xl opacity-30">📦</span>
               </div>
-            </section>
+              <h3 className="text-xl font-semibold text-white mb-2">No collections available</h3>
+              <p className="text-surface-400 text-sm">Collections will appear here once added.</p>
+            </div>
+          )}
+
+          {/* View All / Show Less */}
+          {hasMoreCategories && (
+            <div className="text-center mt-12">
+              <button
+                onClick={() => setShowAll(!showAll)}
+                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full border border-white/[0.1] text-white text-sm font-semibold hover:bg-white/[0.04] transition-all duration-300"
+              >
+                {showAll ? 'Show Less' : 'View All Collections'}
+              </button>
+            </div>
+          )}
+        </div>
       </main>
       <Footer />
     </div>

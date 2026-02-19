@@ -1,154 +1,242 @@
-// src/pages/LoginPage.tsx
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { FaEye, FaEyeSlash, FaGoogle, FaFacebook } from 'react-icons/fa';
+import { motion } from 'framer-motion';
+import { FaEye, FaEyeSlash, FaRocket, FaShieldAlt, FaBolt } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import LoadingSpinner from '../components/LoadingSpinner'; // Import LoadingSpinner
+import LoadingSpinner from '../components/LoadingSpinner';
+import logoImage from '../assets/logo_crackers.png';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(''); // Use context error first, then local
+  const [error, setError] = useState('');
 
-  const { login, error: authError } = useAuth(); // Get authError from context
+  const { login, error: authError } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-
   const from = location.state?.from?.pathname || '/';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(''); // Clear local error
-
-    const result = await login(email, password); // login now returns { success, error? }
-
+    setError('');
+    const result = await login(email, password);
     if (result.success) {
       navigate(from, { replace: true });
     } else {
-      // Use the specific error from the login function or a default
       setError(result.error || 'Invalid email or password');
     }
-
     setIsLoading(false);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col"> {/* Added flex flex-col */}
-      <Header />
-      <div className="flex-grow flex items-center justify-center py-16 px-4"> {/* Added flex-grow */}
-        <div className="max-w-md w-full space-y-8">
-          <div className="text-center">
-            <div className="text-4xl mb-4">🎇</div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back!</h2>
-            <p className="text-gray-600">Sign in to your Sparkle Crackers account</p>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-md p-8">
-            {/* Display error (prioritize local error state) */}
-            {(error || authError) && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4" role="alert">
-                {error || authError}
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                  Email Address
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  autoComplete="email" // Added autocomplete
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                  placeholder="Enter your email"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                  Password
-                </label>
-                <div className="relative">
-                  <input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    autoComplete="current-password" // Added autocomplete
-                    className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                    placeholder="Enter your password"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600" // Added hover
-                    aria-label={showPassword ? "Hide password" : "Show password"} // Added aria-label
-                  >
-                    {showPassword ? <FaEyeSlash /> : <FaEye />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <input
-                    id="remember-me"
-                    type="checkbox"
-                    className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
-                    Remember me
-                  </label>
-                </div>
-                {/* --- Link to Forgot Password Page --- */}
-                <Link to="/forgot-password" className="text-sm text-red-600 hover:text-red-500 font-medium"> {/* Added font-medium */}
-                  Forgot password?
-                </Link>
-                {/* --- End Link --- */}
-              </div>
-
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full flex justify-center items-center bg-gradient-to-r from-red-600 to-orange-600 text-white py-3 px-4 rounded-md font-semibold hover:from-red-700 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" // Added transition
-              >
-                {isLoading ? <LoadingSpinner size="sm" color="text-white" /> : 'Sign In'}
-              </button>
-            </form>
-
-            {/* Social Login (Keep structure, functionality needs separate implementation) */}
-            <div className="mt-6">
-              {/* ... (Divider and Social Buttons - kept as is) ... */}
-               <div className="relative"> <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-300" /></div> <div className="relative flex justify-center text-sm"><span className="px-2 bg-white text-gray-500">Or continue with</span></div> </div>
-               <div className="mt-6 grid grid-cols-2 gap-3"> <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"> <FaGoogle className="text-red-500 mr-2" /> Google </button> <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"> <FaFacebook className="text-blue-500 mr-2" /> Facebook </button> </div>
-            </div>
-
-            {/* Link to Sign Up */}
-            <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
-                Don't have an account?{' '}
-                <Link to="/signup" className="font-medium text-red-600 hover:text-red-500">
-                  Sign up now
-                </Link>
-              </p>
-            </div>
-          </div>
-
-          {/* Demo Accounts Info (Optional) */}
-          {/* <div className="text-center text-xs text-gray-500 mt-4"> ... </div> */}
+    <div className="h-screen bg-surface-900 flex overflow-hidden">
+      {/* Left Side - Form */}
+      <div className="flex-1 flex items-center justify-center p-6 relative overflow-y-auto">
+        {/* Floating decorations */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-accent/5 blur-3xl" />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-gold/5 blur-3xl" />
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+          className="max-w-md w-full relative z-10 my-auto"
+        >
+          {/* Logo/Brand */}
+          <Link to="/" className="inline-block mb-4">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              className="flex items-center gap-2"
+            >
+              <img src={logoImage} alt="Akash Crackers" className="h-10 w-auto" />
+              <span className="text-xl font-bold text-white">Akash Crackers</span>
+            </motion.div>
+          </Link>
+
+          {/* Header */}
+          <div className="mb-5">
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 tracking-tight">
+              Welcome back
+            </h1>
+            <p className="text-base text-surface-400">
+              Sign in to continue your shopping experience
+            </p>
+          </div>
+
+          {/* Error Message */}
+          {(error || authError) && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs"
+            >
+              {error || authError}
+            </motion.div>
+          )}
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <div>
+              <label htmlFor="email" className="block text-xs font-medium text-surface-300 mb-1.5">
+                Email address
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoComplete="email"
+                className="w-full px-3 py-2.5 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white text-sm placeholder-surface-500 focus:border-accent/50 focus:ring-2 focus:ring-accent/20 focus:outline-none transition-all"
+                placeholder="you@example.com"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-xs font-medium text-surface-300 mb-1.5">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                  className="w-full px-3 py-2.5 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white text-sm placeholder-surface-500 focus:border-accent/50 focus:ring-2 focus:ring-accent/20 focus:outline-none transition-all pr-10"
+                  placeholder="Enter your password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-white transition-colors"
+                >
+                  {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between pt-1">
+              <label className="flex items-center gap-2 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  className="w-4 h-4 rounded border-white/20 bg-white/5 text-accent focus:ring-2 focus:ring-accent/20 focus:ring-offset-0"
+                />
+                <span className="text-xs text-surface-400 group-hover:text-surface-300 transition-colors">
+                  Remember me
+                </span>
+              </label>
+              <Link
+                to="/forgot-password"
+                className="text-xs text-accent hover:text-accent/80 font-medium transition-colors"
+              >
+                Forgot password?
+              </Link>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-accent to-accent/90 text-white font-semibold text-sm hover:shadow-[0_0_40px_rgba(230,57,70,0.3)] hover:scale-[1.02] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+            >
+              {isLoading ? (
+                <div className="flex items-center justify-center gap-2">
+                  <LoadingSpinner size="sm" />
+                  <span>Signing in...</span>
+                </div>
+              ) : (
+                'Sign in'
+              )}
+            </button>
+          </form>
+
+          {/* Divider */}
+          <div className="my-4 flex items-center gap-4">
+            <div className="flex-1 h-px bg-white/10" />
+            <span className="text-xs text-surface-500">or</span>
+            <div className="flex-1 h-px bg-white/10" />
+          </div>
+
+          {/* Sign Up Link */}
+          <div className="text-center">
+            <p className="text-sm text-surface-400">
+              Don't have an account?{' '}
+              <Link
+                to="/signup"
+                className="text-accent hover:text-accent/80 font-semibold transition-colors"
+              >
+                Create one now
+              </Link>
+            </p>
+          </div>
+        </motion.div>
       </div>
-      <Footer />
+
+      {/* Right Side - Visual/Info */}
+      <motion.div
+        initial={{ opacity: 0, x: 30 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.6 }}
+        className="hidden lg:flex flex-1 p-8 items-center justify-center relative overflow-hidden"
+      >
+        {/* Background image */}
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1592843997881-cab3860b1067?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZmlyZSUyMGNyYWNrZXJzfGVufDB8fDB8fHww&fm=jpg&q=60&w=3000"
+            alt="Premium festival crackers display"
+            className="w-full h-full object-cover"
+          />
+          {/* Blur overlay */}
+          <div className="absolute inset-0 backdrop-blur-[2px] bg-black/40" />
+          {/* Dark gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-accent/40 via-black/60 to-gold/40" />
+        </div>
+
+        <div className="relative z-10 max-w-lg">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <h2 className="text-5xl font-bold text-white mb-4 leading-tight">
+              Light up your celebrations
+            </h2>
+            <p className="text-lg text-surface-300 mb-8">
+              Premium quality crackers delivered right to your doorstep. Shop with confidence and make every moment special.
+            </p>
+
+            <div className="grid grid-cols-1 gap-4">
+              {[
+                { icon: FaRocket, title: 'Fast Delivery', desc: 'Get your orders delivered on time, every time with reliable shipping service' },
+                { icon: FaShieldAlt, title: 'Safe & Secure', desc: 'Premium quality products with proper safety certifications and standards' },
+                { icon: FaBolt, title: 'Best Prices', desc: 'Competitive pricing with amazing bulk discounts and seasonal offers' }
+              ].map((feature, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.5 + idx * 0.1 }}
+                  className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.03] border border-white/[0.06] backdrop-blur-sm hover:bg-white/[0.06] transition-all"
+                >
+                  <div className="w-12 h-12 rounded-lg bg-accent/20 flex items-center justify-center flex-shrink-0">
+                    <feature.icon className="text-accent text-xl" />
+                  </div>
+                  <div>
+                    <h3 className="text-white font-semibold text-base mb-1">{feature.title}</h3>
+                    <p className="text-sm text-surface-400 leading-relaxed">{feature.desc}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </motion.div>
     </div>
   );
 };

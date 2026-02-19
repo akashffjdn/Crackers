@@ -44,7 +44,7 @@ const ResetPasswordPage = lazy(() => import('../pages/ResetPasswordPage'));
 const AppRoutes: React.FC = () => {
   return (
     // Wrap all routes in Suspense with a fallback UI
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><LoadingSpinner text="Loading page..." /></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-surface-900 flex items-center justify-center"><LoadingSpinner text="Loading page..." /></div>}>
       <Routes>
         {/* Public Routes */}
         <Route path="" element={<CrackersLanding />} />
@@ -56,7 +56,7 @@ const AppRoutes: React.FC = () => {
         <Route path="/bulk-orders" element={<BulkOrders />} />
         <Route path="/festival-collections" element={<FestivalCollections />} />
         <Route path="/contact" element={<ContactUs />} />
-        <Route path="/quick-order" element={<QuickOrderPage/>}/>
+        <Route path="/quick-order" element={<QuickOrderPage />} />
         <Route path="/cart" element={<CartPage />} />
 
         {/* Auth Routes */}

@@ -1,199 +1,170 @@
-import React from 'react';
-import { FaStar, FaQuoteLeft, FaCheckCircle } from 'react-icons/fa';
-import { useContent } from '../context/ContentContext';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaStar } from 'react-icons/fa';
+
+interface Testimonial {
+  name: string;
+  location: string;
+  rating: number;
+  text: string;
+  image: string;
+}
+
+const testimonials: Testimonial[] = [
+  {
+    name: 'Priya Sharma',
+    location: 'Chennai',
+    rating: 5,
+    text: 'Best quality crackers we\'ve ever purchased. The whole family loved the display. Delivery was on time and packaging was excellent.',
+    image: 'https://randomuser.me/api/portraits/women/11.jpg',
+  },
+  {
+    name: 'Rajesh Kumar',
+    location: 'Bangalore',
+    rating: 5,
+    text: 'Ordered in bulk for our company\'s Diwali celebration. Amazing prices and the quality exceeded our expectations. Will order again!',
+    image: 'https://randomuser.me/api/portraits/men/32.jpg',
+  },
+  {
+    name: 'Anitha Devi',
+    location: 'Mumbai',
+    rating: 5,
+    text: 'The gift boxes are beautifully curated. Perfect for sending to relatives. The sparklers were a hit with the kids!',
+    image: 'https://randomuser.me/api/portraits/women/68.jpg',
+  },
+  {
+    name: 'Vikram Patel',
+    location: 'Hyderabad',
+    rating: 4,
+    text: 'Reliable service and good variety. The festival collection had everything we needed. Customer support was very helpful.',
+    image: 'https://randomuser.me/api/portraits/men/15.jpg',
+  },
+];
 
 const Testimonials: React.FC = () => {
-  const { getContentValue, getTestimonials } = useContent();
+  const [current, setCurrent] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const DURATION = 6000;
 
-// ✅ Get dynamic content with fallbacks - CORRECTED field IDs
-const sectionTitle = getContentValue('testimonialsSection') || 'What Our Customers Say';
-const sectionSubtitle = getContentValue('testimonialsSubtitle') || 'Don\'t just take our word for it - hear from thousands of satisfied customers who trust us for their festival celebrations.';
-const dynamicTestimonials = getTestimonials();
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % testimonials.length);
+      setProgress(0);
+    }, DURATION);
 
+    const progressTimer = setInterval(() => {
+      setProgress((prev) => Math.min(prev + 2, 100));
+    }, DURATION / 50);
 
-  // Use dynamic testimonials if available, otherwise fallback to default
-  const testimonials = dynamicTestimonials.length > 0 ? dynamicTestimonials : [
-    {
-      name: "Rajesh Kumar",
-      location: "Mumbai",
-      rating: 5,
-      comment: "Excellent quality crackers! The delivery was prompt and the products were exactly as described. Perfect for our Diwali celebration.",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face"
-    },
-    {
-      name: "Priya Sharma",
-      location: "Delhi",
-      rating: 5,
-      comment: "Amazing service and top-quality fireworks. The safety instructions were clear and the products were fresh. Highly recommended!",
-      image: "https://images.unsplash.com/photo-1494790108755-2616b612b5bb?w=100&h=100&fit=crop&crop=face"
-    },
-    {
-      name: "Arjun Patel",
-      location: "Bangalore",
-      rating: 5,
-      comment: "The quality of crackers was exceptional and the delivery was on time. Perfect for Diwali! Will definitely order again next year.",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face"
-    }
-  ];
+    return () => {
+      clearInterval(timer);
+      clearInterval(progressTimer);
+    };
+  }, [current]);
 
   return (
-    <section className="relative py-20 bg-gradient-to-br from-gray-50 via-white to-blue-50 overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-20 left-10 text-6xl animate-pulse">🎆</div>
-        <div className="absolute top-40 right-20 text-4xl animate-bounce">✨</div>
-        <div className="absolute bottom-32 left-20 text-5xl animate-pulse">🎇</div>
-        <div className="absolute bottom-20 right-32 text-3xl animate-bounce">🌟</div>
+    <section className="py-16 md:py-20 bg-surface-900 relative overflow-hidden">
+      {/* Background */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-accent/[0.03] rounded-full blur-[120px]" />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4">
-        {/* Enhanced Header Section */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center bg-gradient-to-r from-red-100 to-orange-100 text-red-700 px-6 py-3 rounded-full text-sm font-semibold mb-6">
-            <FaCheckCircle className="mr-2" />
-            <span>Trusted by 10,000+ Happy Customers</span>
-          </div>
-          
-          <h2 className="text-4xl md:text-5xl font-extrabold mb-6">
-            <span className="text-gray-900">{sectionTitle}</span>
-            <div className="flex justify-center mt-3">
-              <div className="flex space-x-1">
-                {[...Array(5)].map((_, i) => (
-                  <FaStar key={i} className="text-yellow-400 text-2xl animate-pulse" style={{animationDelay: `${i * 0.1}s`}} />
-                ))}
-              </div>
-            </div>
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-100px' }}
+          transition={{ duration: 0.7 }}
+          className="text-center mb-16"
+        >
+          <p className="text-[11px] font-semibold text-accent tracking-[0.2em] uppercase mb-4">Testimonials</p>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-[-0.02em] leading-[1.05]">
+            Loved by<br />
+            <span className="bg-gradient-to-r from-accent to-gold bg-clip-text text-transparent">thousands.</span>
           </h2>
-          
-          <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-            {sectionSubtitle}
-          </p>
-        </div>
+        </motion.div>
 
-        {/* Enhanced Testimonials Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {testimonials.map((testimonial, index) => (
-            <div 
-              key={index} 
-              className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-red-200 transform hover:-translate-y-2"
-            >
-              {/* Card Header with Gradient */}
-              <div className="bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 h-2"></div>
-              
-              {/* Quote Icon */}
-              <div className="absolute top-6 right-6 text-red-200 opacity-20 group-hover:opacity-40 transition-opacity">
-                <FaQuoteLeft className="text-4xl" />
-              </div>
+        {/* Main testimonial card with image */}
+        <div className="max-w-5xl mx-auto">
+          <div className="relative min-h-[400px]">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={current}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                className="grid md:grid-cols-2 gap-8 items-center p-8 md:p-12 rounded-2xl bg-white/[0.02] border border-white/[0.06]"
+              >
+                {/* Left: Customer Image */}
+                <div className="relative">
+                  {/* Image with glow */}
+                  <div className="relative rounded-2xl overflow-hidden">
+                    <img
+                      src={testimonials[current].image}
+                      alt={testimonials[current].name}
+                      className="w-full h-[300px] md:h-[350px] object-cover"
+                    />
+                    {/* Gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-surface-900/60 via-transparent to-transparent" />
+                  </div>
+                  {/* Subtle glow effect */}
+                  <div className="absolute -inset-2 bg-accent/5 rounded-2xl blur-xl -z-10" />
+                </div>
 
-              <div className="p-8">
-                {/* Rating Stars */}
-                <div className="flex justify-center mb-6">
-                  <div className="bg-gray-50 rounded-full px-4 py-2 flex space-x-1">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <FaStar key={i} className="text-yellow-400 text-lg" />
+                {/* Right: Testimonial Content */}
+                <div className="flex flex-col justify-center">
+                  {/* Stars */}
+                  <div className="flex items-center gap-1.5 mb-6">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <FaStar
+                        key={i}
+                        size={18}
+                        className={i < testimonials[current].rating ? 'text-gold' : 'text-surface-700'}
+                      />
                     ))}
                   </div>
-                </div>
 
-                {/* Testimonial Content */}
-                <blockquote className="text-gray-700 text-lg leading-relaxed mb-6 font-medium italic">
-                  "{testimonial.comment}"
-                </blockquote>
+                  {/* Quote */}
+                  <blockquote className="text-xl md:text-2xl font-light text-white leading-relaxed tracking-[-0.01em] mb-8">
+                    "{testimonials[current].text}"
+                  </blockquote>
 
-                {/* Customer Info */}
-                <div className="flex items-center">
-                  <div className="relative">
-                    <img
-                      src={testimonial.image}
-                      alt={testimonial.name}
-                      className="w-16 h-16 rounded-full object-cover border-4 border-white shadow-lg"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face';
-                      }}
-                    />
-                    <div className="absolute -bottom-1 -right-1 bg-green-500 w-5 h-5 rounded-full border-2 border-white flex items-center justify-center">
-                      <FaCheckCircle className="text-white text-xs" />
+                  {/* Author Info */}
+                  <div className="flex items-center gap-4 pt-6 border-t border-white/[0.06]">
+                    <div className="flex-1">
+                      <p className="text-base font-semibold text-white mb-1">{testimonials[current].name}</p>
+                      <p className="text-sm text-surface-400">{testimonials[current].location}</p>
                     </div>
                   </div>
-                  <div className="ml-4">
-                    <h4 className="font-bold text-gray-900 text-lg">{testimonial.name}</h4>
-                    <p className="text-gray-500 text-sm flex items-center">
-                      <span className="inline-block w-2 h-2 bg-red-400 rounded-full mr-2"></span>
-                      {testimonial.location}
-                    </p>
-                  </div>
                 </div>
-              </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
 
-              {/* Hover Effect Border */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-400 via-orange-400 to-yellow-400 opacity-0 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none"></div>
-            </div>
-          ))}
+          {/* Navigation Dots */}
+          <div className="flex items-center justify-center gap-3 mt-12">
+            {testimonials.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => { setCurrent(i); setProgress(0); }}
+                className="relative h-1 rounded-full overflow-hidden transition-all duration-300"
+                style={{ width: i === current ? 48 : 16 }}
+                aria-label={`Go to testimonial ${i + 1}`}
+              >
+                <div className="absolute inset-0 bg-white/[0.08]" />
+                {i === current && (
+                  <motion.div
+                    className="absolute inset-0 bg-accent rounded-full origin-left"
+                    style={{ scaleX: progress / 100 }}
+                  />
+                )}
+                {i < current && <div className="absolute inset-0 bg-accent/40 rounded-full" />}
+              </button>
+            ))}
+          </div>
         </div>
-
-        {/* Enhanced Stats Section */}
-        {/* <div className="bg-gradient-to-r from-red-600 via-orange-600 to-yellow-500 rounded-3xl p-8 md:p-12 text-white text-center mb-16">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="group">
-              <div className="text-4xl md:text-5xl font-extrabold mb-2 group-hover:scale-110 transition-transform">10K+</div>
-              <div className="text-orange-100 font-medium">Happy Customers</div>
-            </div>
-            <div className="group">
-              <div className="text-4xl md:text-5xl font-extrabold mb-2 group-hover:scale-110 transition-transform">4.9</div>
-              <div className="text-orange-100 font-medium">Average Rating</div>
-            </div>
-            <div className="group">
-              <div className="text-4xl md:text-5xl font-extrabold mb-2 group-hover:scale-110 transition-transform">15+</div>
-              <div className="text-orange-100 font-medium">Years Experience</div>
-            </div>
-            <div className="group">
-              <div className="text-4xl md:text-5xl font-extrabold mb-2 group-hover:scale-110 transition-transform">100%</div>
-              <div className="text-orange-100 font-medium">Safe & Legal</div>
-            </div>
-          </div>
-        </div> */}
-
-        {/* Enhanced Trust Indicators */}
-        {/* <div className="text-center">
-          <h3 className="text-2xl font-bold text-gray-900 mb-8">As Featured In</h3>
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
-            <div className="group">
-              <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-red-200 transform hover:scale-105">
-                <div className="text-gray-600 font-bold text-lg group-hover:text-red-600 transition-colors">
-                  📰 Times of India
-                </div>
-                <div className="text-sm text-gray-500 mt-1">Featured Article</div>
-              </div>
-            </div>
-            
-            <div className="group">
-              <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-red-200 transform hover:scale-105">
-                <div className="text-gray-600 font-bold text-lg group-hover:text-red-600 transition-colors">
-                  🏆 #1 Sivakasi Brand
-                </div>
-                <div className="text-sm text-gray-500 mt-1">Quality Award</div>
-              </div>
-            </div>
-            
-            <div className="group">
-              <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-red-200 transform hover:scale-105">
-                <div className="text-gray-600 font-bold text-lg group-hover:text-red-600 transition-colors">
-                  🛡️ ISO Certified
-                </div>
-                <div className="text-sm text-gray-500 mt-1">Safety Standards</div>
-              </div>
-            </div>
-            
-            <div className="group">
-              <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-red-200 transform hover:scale-105">
-                <div className="text-gray-600 font-bold text-lg group-hover:text-red-600 transition-colors">
-                  🚚 Pan India
-                </div>
-                <div className="text-sm text-gray-500 mt-1">Delivery Network</div>
-              </div>
-            </div>
-          </div>
-        </div> */}
       </div>
     </section>
   );

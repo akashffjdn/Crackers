@@ -1,47 +1,87 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useContent } from '../context/ContentContext'; // ✅ Add this import
+import { motion } from 'framer-motion';
 
 const CTA: React.FC = () => {
-  const { getContentValue } = useContent(); // ✅ Add this hook
-
-  // ✅ Get dynamic content
-  const ctaTitle = getContentValue('cta-title') || 'Ready to Light Up Your Festival?';
-  const ctaSubtitle = getContentValue('cta-subtitle') || 'Don\'t wait! Order your premium crackers now and make this festival unforgettable.';
-  const ctaOffer = getContentValue('cta-offer') || 'Free delivery on orders above ₹2000.';
-  const primaryButton = getContentValue('cta-primary-button') || 'Order Now 🛒';
-  const secondaryButton = getContentValue('cta-secondary-button') || 'Get Catalog 📋';
-  const contactInfo = getContentValue('cta-contact-info') || '📞 Call us: +91 98765 43210 | 🚚 Free delivery | 💯 100% Safe';
-
   return (
-    <section className="bg-gradient-to-r from-red-600 to-orange-600 text-white py-16">
-      <div className="max-w-4xl mx-auto text-center px-6">
-        <h2 className="text-3xl md:text-4xl font-bold mb-4">
-          {ctaTitle} {/* ✅ Dynamic title */}
-        </h2>
-        <p className="text-xl mb-6">
-          {ctaSubtitle} {/* ✅ Dynamic subtitle */}
-        </p>
-        <p className="text-lg mb-8 text-orange-100">
-          {ctaOffer} {/* ✅ Dynamic offer */}
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
-          <Link 
-            to="/shop" 
-            className="bg-yellow-500 text-red-700 px-8 py-3 rounded-lg text-lg font-bold hover:bg-yellow-400 transition-colors"
-          >
-            {primaryButton} {/* ✅ Dynamic primary button */}
-          </Link>
-          <Link 
-            to="/catalog" 
-            className="border-2 border-white text-white px-8 py-3 rounded-lg text-lg font-bold hover:bg-white hover:text-red-600 transition-colors"
-          >
-            {secondaryButton} {/* ✅ Dynamic secondary button */}
-          </Link>
-        </div>
-        <p className="text-sm text-orange-100">
-          {contactInfo} {/* ✅ Dynamic contact info */}
-        </p>
+    <section className="py-16 md:py-20 bg-surface-900 relative overflow-hidden">
+      {/* Subtle background elements */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-accent/[0.03] rounded-full blur-[120px]" />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-100px' }}
+          transition={{ duration: 0.7 }}
+          className="text-center mb-16"
+        >
+          <p className="text-[11px] font-semibold text-accent tracking-[0.2em] uppercase mb-4">
+            Ready to Celebrate
+          </p>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-[-0.02em] leading-[1.05] max-w-3xl mx-auto mb-6">
+            Start your festival<br />
+            <span className="bg-gradient-to-r from-accent to-gold bg-clip-text text-transparent">
+              shopping today.
+            </span>
+          </h2>
+          <p className="text-lg text-surface-400 max-w-2xl mx-auto leading-relaxed mb-12">
+            Browse 500+ premium products. Fast delivery across India. Safe, certified, and ready to light up your celebrations.
+          </p>
+
+          {/* CTAs */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              to="/shop"
+              className="group relative inline-flex items-center justify-center gap-3 px-10 py-4 bg-accent text-white text-base font-semibold rounded-full overflow-hidden transition-all duration-300 hover:shadow-[0_0_40px_rgba(230,57,70,0.4)] hover:scale-[1.02] shadow-lg"
+            >
+              <span className="relative z-10">Shop Now</span>
+              <svg
+                className="relative z-10 w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={3}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+              <div className="absolute inset-0 bg-gradient-to-r from-accent to-[#ff4757] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </Link>
+            <Link
+              to="/bulk-orders"
+              className="inline-flex items-center justify-center gap-2 px-10 py-4 border border-white/[0.12] text-white text-base font-semibold rounded-full hover:bg-white/[0.06] hover:border-white/[0.2] transition-all duration-300 backdrop-blur-sm"
+            >
+              Bulk Orders
+            </Link>
+          </div>
+        </motion.div>
+
+        {/* Feature highlights - subtle cards */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.7, delay: 0.2 }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8"
+        >
+          {[
+            { title: 'Free Delivery', desc: 'On orders above ₹2,000' },
+            { title: '40% Savings', desc: 'Factory direct pricing' },
+            { title: '24/7 Support', desc: 'Expert assistance always' },
+          ].map((item, i) => (
+            <div
+              key={i}
+              className="text-center p-6 rounded-2xl bg-white/[0.02] border border-white/[0.04] hover:border-white/[0.08] hover:bg-white/[0.03] transition-all duration-300"
+            >
+              <h3 className="text-base font-semibold text-white mb-1">{item.title}</h3>
+              <p className="text-sm text-surface-400">{item.desc}</p>
+            </div>
+          ))}
+        </motion.div>
       </div>
     </section>
   );

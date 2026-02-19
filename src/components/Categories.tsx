@@ -1,117 +1,114 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { useProducts } from '../context/ProductContext';
-import { useCategories } from '../context/CategoryContext'; // ✅ Add this import
+import { motion } from 'framer-motion';
+import { useCategories } from '../context/CategoryContext';
+import { FaArrowRight } from 'react-icons/fa';
 
 const Categories: React.FC = () => {
-  const { getProductsByCategory } = useProducts();
-  const { categories } = useCategories(); // ✅ Use dynamic categories instead of static import
-  const [showAll, setShowAll] = useState(false);
+  const { categories } = useCategories();
 
-  // ✅ Limit to 9 categories (3x3) unless "Show All" is clicked
-  const displayedCategories = showAll ? categories : categories.slice(0, 9);
-  const hasMoreCategories = categories.length > 9;
+  const displayCategories = categories.length > 0 ? categories.slice(0, 6) : [
+    { id: 'sparklers', name: 'Sparklers', heroImage: '', description: 'Handheld sparkle magic for every age' },
+    { id: 'rockets', name: 'Sky Rockets', heroImage: '', description: 'Spectacular aerial performances' },
+    { id: 'flower-pots', name: 'Flower Pots', heroImage: '', description: 'Mesmerizing ground displays' },
+    { id: 'fancy', name: 'Fancy Collection', heroImage: '', description: 'Premium visual experiences' },
+    { id: 'bombs', name: 'Sound Crackers', heroImage: '', description: 'Thunder & celebration sounds' },
+    { id: 'gift-boxes', name: 'Gift Boxes', heroImage: '', description: 'Curated festival gift sets' },
+  ];
+
+  const containerVariants = {
+    hidden: {},
+    visible: {
+      transition: { staggerChildren: 0.1 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 40 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] as const }
+    }
+  };
 
   return (
-    <section id="products" className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-800 mb-4">
-            Our Product Categories
-          </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Discover our wide range of premium quality crackers, carefully crafted in Sivakasi 
-            to make your celebrations spectacular and memorable.
-          </p>
-          {/* ✅ Show total category count */}
-          <p className="text-sm text-gray-500 mt-2">
-            {categories.length} Categories Available
-          </p>
-        </div>
+    <section className="py-16 md:py-20 bg-surface-900 relative overflow-hidden">
+      {/* Background accent */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full bg-accent/[0.03] blur-[150px] pointer-events-none" />
 
-        {/* ✅ 3x3 Grid Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {displayedCategories.map((category, index) => {
-            // ✅ Get dynamic product count for this category
-            const categoryProducts = getProductsByCategory(category.id);
-            const productCount = categoryProducts.length;
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-100px' }}
+          transition={{ duration: 0.7 }}
+          className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16"
+        >
+          <div>
+            <p className="text-[11px] font-semibold text-accent tracking-[0.2em] uppercase mb-4">Collections</p>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-[-0.02em] leading-[1.05]">
+              Explore by<br />
+              <span className="bg-gradient-to-r from-accent to-gold bg-clip-text text-transparent">category.</span>
+            </h2>
+          </div>
+          <Link
+            to="/shop"
+            className="group inline-flex items-center gap-2 text-surface-400 hover:text-white text-sm font-medium transition-colors duration-300"
+          >
+            View all categories
+            <FaArrowRight size={11} className="group-hover:translate-x-1 transition-transform duration-300" />
+          </Link>
+        </motion.div>
 
-            return (
+        {/* Grid — 2 large + 4 small layout */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-80px' }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+        >
+          {displayCategories.map((cat: any, index: number) => (
+            <motion.div
+              key={cat.id || cat._id}
+              variants={itemVariants}
+              className={index < 2 ? 'lg:row-span-2' : ''}
+            >
               <Link
-                key={category.id}
-                to={`/products/${category.id}`}
-                className="group bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl p-6 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-orange-100"
+                to={`/products/${cat.id || cat._id}`}
+                className="group block relative overflow-hidden rounded-2xl bg-surface-800 border border-white/[0.04] hover:border-white/[0.1] transition-all duration-500 h-full"
               >
-                <div className="relative overflow-hidden rounded-xl mb-4">
-                  <img
-                    src={category.heroImage}
-                    alt={category.name}
-                    className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
-                    onError={(e) => {
-                      // ✅ Fallback image if hero image fails to load
-                      (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop';
+                {/* Image */}
+                <div className={`overflow-hidden ${index < 2 ? 'h-[320px] lg:h-full' : 'h-[220px]'}`}>
+                  <div
+                    className="w-full h-full bg-gradient-to-br from-surface-700 to-surface-800 group-hover:scale-105 transition-transform duration-700"
+                    style={{
+                      backgroundImage: cat.heroImage ? `url(${cat.heroImage})` : undefined,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
                     }}
                   />
-                  <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-full p-2 text-2xl">
-                    {category.icon}
-                  </div>
-                  <div className="absolute bottom-4 right-4 bg-red-600 text-white px-2 py-1 rounded text-xs font-semibold">
-                    {productCount} items {/* ✅ Dynamic product count */}
-                  </div>
                 </div>
-                
-                <h3 className="text-2xl font-bold text-gray-800 mb-2">
-                  {category.name}
-                </h3>
-                <p className="text-gray-600 mb-4 line-clamp-3">
-                  {category.description}
-                </p>
-                
-                <div className="w-full bg-gradient-to-r from-red-500 to-orange-500 text-white py-3 rounded-xl font-semibold hover:from-red-600 hover:to-orange-600 transition-all text-center">
-                  View Products
+
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-surface-900 via-surface-900/40 to-transparent" />
+
+                {/* Content overlay */}
+                <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+                  <h3 className="text-xl md:text-2xl font-bold text-white mb-1.5 group-hover:text-accent transition-colors duration-300">
+                    {cat.name}
+                  </h3>
+                  <p className="text-sm text-surface-400 mb-4">{cat.description || 'Explore collection'}</p>
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                    Explore <FaArrowRight size={10} />
+                  </span>
                 </div>
               </Link>
-            );
-          })}
-        </div>
-
-        {/* ✅ View All Categories Button */}
-        {hasMoreCategories && !showAll && (
-          <div className="text-center mt-12">
-            <button
-              onClick={() => setShowAll(true)}
-              className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold text-lg rounded-2xl hover:from-red-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-105 shadow-lg"
-            >
-              View All Categories 
-              {/* ({categories.length} total) */}
-            </button>
-          </div>
-        )}
-
-        {/* ✅ Show Less Button when all categories are displayed */}
-        {showAll && hasMoreCategories && (
-          <div className="text-center mt-12">
-            <button
-              onClick={() => setShowAll(false)}
-              className="inline-flex items-center justify-center px-8 py-4 bg-gray-600 text-white font-bold text-lg rounded-2xl hover:bg-gray-700 transition-all duration-300"
-            >
-              Show Less Categories
-            </button>
-          </div>
-        )}
-
-        {/* ✅ Empty State when no categories exist */}
-        {categories.length === 0 && (
-          <div className="text-center py-16">
-            <div className="text-gray-400 mb-4">
-              <div className="text-6xl mb-4">📦</div>
-            </div>
-            <h3 className="text-xl font-medium text-gray-900 mb-2">No categories available</h3>
-            <p className="text-gray-600">
-              Categories will appear here once they are added by the admin.
-            </p>
-          </div>
-        )}
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
     </section>
   );

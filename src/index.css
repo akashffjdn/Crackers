@@ -1,3 +1,304 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ═══════════════════════════════════════════════
+   CRACKERS PREMIUM — Design System
+   Inspired by Apple & Xiaomi aesthetics
+   ═══════════════════════════════════════════════ */
+
+@layer base {
+  /* ---------- Reset & Defaults ---------- */
+  *,
+  *::before,
+  *::after {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+
+  body {
+    @apply bg-surface-900 text-surface-200 font-sans;
+    line-height: 1.6;
+  }
+
+  ::selection {
+    @apply bg-accent/20 text-white;
+  }
+
+  /* ---------- Typography ---------- */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display text-white tracking-tight;
+  }
+
+  a {
+    @apply transition-colors duration-300;
+  }
+
+  /* ---------- Scrollbar ---------- */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-surface-600 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-surface-500;
+  }
+}
+
+@layer components {
+  /* ---------- Glass Morphism ---------- */
+  .glass {
+    @apply bg-white/[0.04] backdrop-blur-[24px] border border-white/[0.06];
+  }
+
+  .glass-light {
+    @apply bg-white/[0.06] backdrop-blur-[20px] border border-white/[0.08];
+  }
+
+  .glass-card {
+    @apply bg-white/[0.03] backdrop-blur-[16px] border border-white/[0.05] rounded-3xl;
+  }
+
+  /* ---------- Buttons ---------- */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2
+           px-8 py-3.5 rounded-full
+           bg-accent text-white font-semibold text-sm
+           hover:bg-accent-light active:scale-[0.97]
+           transition-all duration-300
+           shadow-glow hover:shadow-glow-lg;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2
+           px-8 py-3.5 rounded-full
+           bg-white/[0.06] text-white font-semibold text-sm
+           border border-white/[0.1]
+           hover:bg-white/[0.1] active:scale-[0.97]
+           transition-all duration-300;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2
+           px-6 py-2.5 rounded-full
+           bg-transparent text-white font-medium text-sm
+           border border-white/[0.15]
+           hover:bg-white/[0.05] hover:border-white/[0.25]
+           active:scale-[0.97]
+           transition-all duration-300;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2
+           px-6 py-2.5 rounded-full
+           text-surface-400 font-medium text-sm
+           hover:text-white hover:bg-white/[0.04]
+           active:scale-[0.97]
+           transition-all duration-300;
+  }
+
+  .btn-accent-outline {
+    @apply inline-flex items-center justify-center gap-2
+           px-6 py-2.5 rounded-full
+           bg-transparent text-accent font-medium text-sm
+           border border-accent/30
+           hover:bg-accent/10 hover:border-accent/50
+           active:scale-[0.97]
+           transition-all duration-300;
+  }
+
+  /* ---------- Cards ---------- */
+  .card {
+    @apply bg-surface-800 border border-white/[0.05] rounded-2xl
+           transition-all duration-300;
+  }
+
+  .card-hover {
+    @apply card hover:border-white/[0.1] hover:shadow-card-hover
+           hover:-translate-y-1;
+  }
+
+  .card-glass {
+    @apply glass-card p-6 transition-all duration-300
+           hover:border-white/[0.1] hover:bg-white/[0.05];
+  }
+
+  /* ---------- Inputs ---------- */
+  .input {
+    @apply w-full px-4 py-3 rounded-xl
+           bg-white/[0.04] border border-white/[0.08]
+           text-white placeholder:text-surface-500
+           focus:outline-none focus:border-accent/40 focus:bg-white/[0.06]
+           transition-all duration-300;
+  }
+
+  .input-light {
+    @apply w-full px-4 py-3 rounded-xl
+           bg-surface-50 border border-surface-200
+           text-surface-900 placeholder:text-surface-400
+           focus:outline-none focus:border-accent/40 focus:ring-2 focus:ring-accent/10
+           transition-all duration-300;
+  }
+
+  /* ---------- Badges ---------- */
+  .badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full
+           text-2xs font-semibold uppercase tracking-wider;
+  }
+
+  .badge-accent {
+    @apply badge bg-accent/10 text-accent border border-accent/20;
+  }
+
+  .badge-success {
+    @apply badge bg-emerald-500/10 text-emerald-400 border border-emerald-500/20;
+  }
+
+  .badge-gold {
+    @apply badge bg-gold/10 text-gold border border-gold/20;
+  }
+
+  /* ---------- Typography Components ---------- */
+  .heading-xl {
+    @apply text-display-xl text-white;
+  }
+
+  .heading-lg {
+    @apply text-display-lg text-white;
+  }
+
+  .heading-md {
+    @apply text-display-md text-white;
+  }
+
+  .heading-sm {
+    @apply text-display-sm text-white;
+  }
+
+  .label {
+    @apply text-xs font-semibold uppercase tracking-[0.15em] text-accent;
+  }
+
+  .body-lg {
+    @apply text-lg text-surface-400 leading-relaxed;
+  }
+
+  .body-md {
+    @apply text-base text-surface-400 leading-relaxed;
+  }
+
+  .body-sm {
+    @apply text-sm text-surface-500 leading-relaxed;
+  }
+
+  /* ---------- Section Layout ---------- */
+  .section {
+    @apply py-section px-6 lg:px-10;
+  }
+
+  .section-lg {
+    @apply py-section-lg px-6 lg:px-10;
+  }
+
+  .section-container {
+    @apply max-w-7xl mx-auto;
+  }
+
+  .section-narrow {
+    @apply max-w-4xl mx-auto;
+  }
+
+  .section-divider {
+    @apply h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent;
+  }
+
+  /* ---------- Nav specific ---------- */
+  .nav-glass {
+    @apply fixed top-0 left-0 right-0 z-50
+           bg-surface-900/60 backdrop-blur-[24px]
+           border-b border-white/[0.06]
+           transition-all duration-500;
+  }
+
+  /* ---------- Product specific ---------- */
+  .price {
+    @apply text-2xl font-bold text-white;
+  }
+
+  .price-original {
+    @apply text-sm text-surface-500 line-through ml-2;
+  }
+
+  .discount-badge {
+    @apply absolute top-3 right-3 px-2.5 py-1 rounded-full
+           bg-accent/90 text-white text-2xs font-bold;
+  }
+
+  .bestseller-badge {
+    @apply absolute top-3 left-3 px-2.5 py-1 rounded-full
+           bg-gold/90 text-surface-900 text-2xs font-bold;
+  }
+
+  /* ---------- Skeleton Loader ---------- */
+  .skeleton {
+    @apply bg-surface-700 rounded-lg animate-pulse;
+  }
+
+  /* ---------- Light mode cards (for product pages) ---------- */
+  .card-light {
+    @apply bg-white border border-surface-200 rounded-2xl
+           shadow-card transition-all duration-300
+           hover:shadow-card-hover hover:-translate-y-1;
+  }
+}
+
+@layer utilities {
+  /* ---------- Text Gradient ---------- */
+  .text-gradient {
+    @apply bg-clip-text text-transparent
+           bg-gradient-to-r from-accent to-gold;
+  }
+
+  .text-gradient-light {
+    @apply bg-clip-text text-transparent
+           bg-gradient-to-r from-white to-surface-400;
+  }
+
+  /* ---------- Accent glow ---------- */
+  .glow-accent {
+    box-shadow: 0 0 60px rgba(230, 57, 70, 0.12);
+  }
+
+  /* ---------- Line clamp ---------- */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ---------- Hide scrollbar ---------- */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
