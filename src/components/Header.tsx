@@ -9,8 +9,7 @@ import {
   FaSignInAlt,
   FaSignOutAlt,
   FaChevronDown,
-  FaHeart,
-  FaSearch
+  FaHeart
 } from 'react-icons/fa';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -28,7 +27,6 @@ const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const totalItems = cartItems.reduce((sum: number, item: any) => sum + item.quantity, 0);
 
@@ -107,15 +105,6 @@ const Header: React.FC = () => {
 
             {/* Desktop Actions */}
             <div className="hidden lg:flex items-center gap-3">
-              {/* Search Icon */}
-              <button
-                onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className="w-9 h-9 rounded-lg text-surface-300 hover:text-white hover:bg-white/5 flex items-center justify-center transition-all"
-                aria-label="Search"
-              >
-                <FaSearch size={14} />
-              </button>
-
               {/* Cart */}
               <Link
                 to="/cart"
@@ -207,31 +196,6 @@ const Header: React.FC = () => {
           </div>
         </div>
 
-        {/* Expandable Search Bar */}
-        <AnimatePresence>
-          {isSearchOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="hidden lg:block border-t border-white/5 overflow-hidden"
-            >
-              <div className="max-w-7xl mx-auto px-6 py-4">
-                <div className="relative max-w-2xl mx-auto">
-                  <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-surface-400" size={14} />
-                  <input
-                    type="text"
-                    placeholder="Search for products..."
-                    className="w-full pl-12 pr-4 py-3 rounded-lg bg-surface-800/50 border border-white/10 text-white text-sm placeholder-surface-400 focus:border-accent/50 focus:outline-none focus:ring-2 focus:ring-accent/20 transition-all"
-                    autoFocus
-                    onBlur={() => setIsSearchOpen(false)}
-                  />
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </motion.nav>
 
       {/* Mobile Menu */}
@@ -262,16 +226,6 @@ const Header: React.FC = () => {
                   >
                     <FaTimes size={18} />
                   </button>
-                </div>
-
-                {/* Search */}
-                <div className="relative mb-6">
-                  <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-400" size={14} />
-                  <input
-                    type="text"
-                    placeholder="Search..."
-                    className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-surface-800/50 border border-white/10 text-white text-sm placeholder-surface-400 focus:border-accent/50 focus:outline-none transition-all"
-                  />
                 </div>
 
                 {/* Nav Links */}

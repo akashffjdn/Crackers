@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FaStar } from 'react-icons/fa';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { FaStar, FaQuoteLeft, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 interface Testimonial {
   name: string;
@@ -8,12 +8,14 @@ interface Testimonial {
   rating: number;
   text: string;
   image: string;
+  role: string;
 }
 
 const testimonials: Testimonial[] = [
   {
     name: 'Priya Sharma',
     location: 'Chennai',
+    role: 'Festival Organizer',
     rating: 5,
     text: 'Best quality crackers we\'ve ever purchased. The whole family loved the display. Delivery was on time and packaging was excellent.',
     image: 'https://randomuser.me/api/portraits/women/11.jpg',
@@ -21,6 +23,7 @@ const testimonials: Testimonial[] = [
   {
     name: 'Rajesh Kumar',
     location: 'Bangalore',
+    role: 'Business Owner',
     rating: 5,
     text: 'Ordered in bulk for our company\'s Diwali celebration. Amazing prices and the quality exceeded our expectations. Will order again!',
     image: 'https://randomuser.me/api/portraits/men/32.jpg',
@@ -28,6 +31,7 @@ const testimonials: Testimonial[] = [
   {
     name: 'Anitha Devi',
     location: 'Mumbai',
+    role: 'Happy Customer',
     rating: 5,
     text: 'The gift boxes are beautifully curated. Perfect for sending to relatives. The sparklers were a hit with the kids!',
     image: 'https://randomuser.me/api/portraits/women/68.jpg',
@@ -35,136 +39,190 @@ const testimonials: Testimonial[] = [
   {
     name: 'Vikram Patel',
     location: 'Hyderabad',
+    role: 'Event Planner',
     rating: 4,
     text: 'Reliable service and good variety. The festival collection had everything we needed. Customer support was very helpful.',
     image: 'https://randomuser.me/api/portraits/men/15.jpg',
   },
+  {
+    name: 'Lakshmi Reddy',
+    location: 'Delhi',
+    role: 'Regular Customer',
+    rating: 5,
+    text: 'Outstanding quality and service! The crackers were vibrant and long-lasting. Highly recommend for all occasions.',
+    image: 'https://randomuser.me/api/portraits/women/44.jpg',
+  },
+  {
+    name: 'Arun Krishnan',
+    location: 'Pune',
+    role: 'Corporate Client',
+    rating: 5,
+    text: 'Professional packaging and timely delivery. The bulk order discount was fantastic. Will continue to order from them.',
+    image: 'https://randomuser.me/api/portraits/men/52.jpg',
+  },
 ];
 
 const Testimonials: React.FC = () => {
-  const [current, setCurrent] = useState(0);
-  const [progress, setProgress] = useState(0);
-  const DURATION = 6000;
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % testimonials.length);
-      setProgress(0);
-    }, DURATION);
+  const itemsPerPage = 3;
+  const maxIndex = Math.max(0, testimonials.length - itemsPerPage);
 
-    const progressTimer = setInterval(() => {
-      setProgress((prev) => Math.min(prev + 2, 100));
-    }, DURATION / 50);
+  const next = () => {
+    setCurrentIndex((prev) => Math.min(prev + 1, maxIndex));
+  };
 
-    return () => {
-      clearInterval(timer);
-      clearInterval(progressTimer);
-    };
-  }, [current]);
+  const prev = () => {
+    setCurrentIndex((prev) => Math.max(prev - 1, 0));
+  };
 
   return (
-    <section className="py-16 md:py-20 bg-surface-900 relative overflow-hidden">
-      {/* Background */}
+    <section className="py-20 bg-surface-900 relative overflow-hidden">
+      {/* Background decorations */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-accent/[0.03] rounded-full blur-[120px]" />
+        <div className="absolute top-20 left-10 w-72 h-72 bg-accent/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-gold/5 rounded-full blur-3xl" />
       </div>
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.7 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <p className="text-[11px] font-semibold text-accent tracking-[0.2em] uppercase mb-4">Testimonials</p>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-[-0.02em] leading-[1.05]">
-            Loved by<br />
-            <span className="bg-gradient-to-r from-accent to-gold bg-clip-text text-transparent">thousands.</span>
+          <span className="inline-block px-4 py-2 rounded-full bg-accent/10 border border-accent/30 text-accent text-xs font-bold uppercase tracking-wider mb-4">
+            Testimonials
+          </span>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            What Our <span className="bg-gradient-to-r from-accent to-gold bg-clip-text text-transparent">Customers Say</span>
           </h2>
+          <p className="text-surface-400 text-lg max-w-2xl mx-auto">
+            Don't just take our word for it - hear from our satisfied customers
+          </p>
         </motion.div>
 
-        {/* Main testimonial card with image */}
-        <div className="max-w-5xl mx-auto">
-          <div className="relative min-h-[400px]">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={current}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
-                className="grid md:grid-cols-2 gap-8 items-center p-8 md:p-12 rounded-2xl bg-white/[0.02] border border-white/[0.06]"
-              >
-                {/* Left: Customer Image */}
-                <div className="relative">
-                  {/* Image with glow */}
-                  <div className="relative rounded-2xl overflow-hidden">
-                    <img
-                      src={testimonials[current].image}
-                      alt={testimonials[current].name}
-                      className="w-full h-[300px] md:h-[350px] object-cover"
-                    />
-                    {/* Gradient overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-surface-900/60 via-transparent to-transparent" />
-                  </div>
-                  {/* Subtle glow effect */}
-                  <div className="absolute -inset-2 bg-accent/5 rounded-2xl blur-xl -z-10" />
-                </div>
+        {/* Testimonials Grid with Carousel */}
+        <div className="relative">
+          <div className="overflow-hidden">
+            <motion.div
+              animate={{ x: -currentIndex * (100 / itemsPerPage) + '%' }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              className="flex gap-6"
+            >
+              {testimonials.map((testimonial, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1 }}
+                  className="flex-shrink-0 w-full md:w-[calc(33.333%-16px)]"
+                  style={{ minWidth: 'calc(33.333% - 16px)' }}
+                >
+                  <div className="h-full bg-surface-800/40 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-accent/30 transition-all duration-300 group">
+                    {/* Quote Icon */}
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent/20 to-gold/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                      <FaQuoteLeft className="text-accent text-xl" />
+                    </div>
 
-                {/* Right: Testimonial Content */}
-                <div className="flex flex-col justify-center">
-                  {/* Stars */}
-                  <div className="flex items-center gap-1.5 mb-6">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <FaStar
-                        key={i}
-                        size={18}
-                        className={i < testimonials[current].rating ? 'text-gold' : 'text-surface-700'}
-                      />
-                    ))}
-                  </div>
+                    {/* Stars */}
+                    <div className="flex items-center gap-1 mb-4">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <FaStar
+                          key={i}
+                          size={16}
+                          className={i < testimonial.rating ? 'text-gold' : 'text-surface-700'}
+                        />
+                      ))}
+                    </div>
 
-                  {/* Quote */}
-                  <blockquote className="text-xl md:text-2xl font-light text-white leading-relaxed tracking-[-0.01em] mb-8">
-                    "{testimonials[current].text}"
-                  </blockquote>
+                    {/* Review Text */}
+                    <p className="text-surface-300 text-sm leading-relaxed mb-6 line-clamp-4">
+                      "{testimonial.text}"
+                    </p>
 
-                  {/* Author Info */}
-                  <div className="flex items-center gap-4 pt-6 border-t border-white/[0.06]">
-                    <div className="flex-1">
-                      <p className="text-base font-semibold text-white mb-1">{testimonials[current].name}</p>
-                      <p className="text-sm text-surface-400">{testimonials[current].location}</p>
+                    {/* Customer Info */}
+                    <div className="flex items-center gap-4 pt-4 border-t border-white/5">
+                      <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-accent/30">
+                        <img
+                          src={testimonial.image}
+                          alt={testimonial.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="text-white font-semibold text-sm">{testimonial.name}</h4>
+                        <p className="text-surface-500 text-xs">{testimonial.role} • {testimonial.location}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
+                </motion.div>
+              ))}
+            </motion.div>
           </div>
 
-          {/* Navigation Dots */}
-          <div className="flex items-center justify-center gap-3 mt-12">
-            {testimonials.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => { setCurrent(i); setProgress(0); }}
-                className="relative h-1 rounded-full overflow-hidden transition-all duration-300"
-                style={{ width: i === current ? 48 : 16 }}
-                aria-label={`Go to testimonial ${i + 1}`}
-              >
-                <div className="absolute inset-0 bg-white/[0.08]" />
-                {i === current && (
-                  <motion.div
-                    className="absolute inset-0 bg-accent rounded-full origin-left"
-                    style={{ scaleX: progress / 100 }}
-                  />
-                )}
-                {i < current && <div className="absolute inset-0 bg-accent/40 rounded-full" />}
-              </button>
-            ))}
+          {/* Navigation Buttons */}
+          <div className="flex items-center justify-center gap-4 mt-12">
+            <button
+              onClick={prev}
+              disabled={currentIndex === 0}
+              className="w-12 h-12 rounded-full bg-surface-800/60 border border-white/10 flex items-center justify-center text-white hover:bg-accent hover:border-accent disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-surface-800/60 transition-all"
+              aria-label="Previous testimonials"
+            >
+              <FaChevronLeft />
+            </button>
+
+            {/* Progress indicators */}
+            <div className="flex items-center gap-2">
+              {Array.from({ length: maxIndex + 1 }).map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentIndex(idx)}
+                  className={`h-2 rounded-full transition-all ${
+                    idx === currentIndex ? 'w-8 bg-accent' : 'w-2 bg-surface-700 hover:bg-surface-600'
+                  }`}
+                  aria-label={`Go to page ${idx + 1}`}
+                />
+              ))}
+            </div>
+
+            <button
+              onClick={next}
+              disabled={currentIndex === maxIndex}
+              className="w-12 h-12 rounded-full bg-surface-800/60 border border-white/10 flex items-center justify-center text-white hover:bg-accent hover:border-accent disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-surface-800/60 transition-all"
+              aria-label="Next testimonials"
+            >
+              <FaChevronRight />
+            </button>
           </div>
         </div>
+
+        {/* Stats Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.3 }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16"
+        >
+          {[
+            { value: '10K+', label: 'Happy Customers' },
+            { value: '4.8/5', label: 'Average Rating' },
+            { value: '98%', label: 'Satisfaction Rate' },
+            { value: '15+', label: 'Years Experience' },
+          ].map((stat, idx) => (
+            <div
+              key={idx}
+              className="text-center p-6 rounded-xl bg-white/5 border border-white/10"
+            >
+              <div className="text-3xl font-bold text-white mb-2">{stat.value}</div>
+              <div className="text-sm text-surface-400">{stat.label}</div>
+            </div>
+          ))}
+        </motion.div>
       </div>
     </section>
   );

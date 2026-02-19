@@ -31,10 +31,10 @@ const HowItWorks: React.FC = () => {
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start">
           {/* Left — Sticky header */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-100px' }}
-            transition={{ duration: 0.7 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className="lg:sticky lg:top-32"
           >
             <p className="text-[11px] font-semibold text-accent tracking-[0.2em] uppercase mb-4">How It Works</p>
@@ -49,37 +49,66 @@ const HowItWorks: React.FC = () => {
 
           {/* Right — Steps timeline */}
           <div className="relative">
-            {/* Timeline line */}
-            <div className="absolute left-[23px] top-4 bottom-4 w-px bg-gradient-to-b from-accent/20 via-white/[0.06] to-transparent" />
+            {/* Animated Timeline line - positioned at center of 46px circles */}
+            <motion.div
+              initial={{ scaleY: 0 }}
+              whileInView={{ scaleY: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+              className="absolute left-[47px] top-[46px] bottom-[46px] w-[2px] bg-gradient-to-b from-accent/40 via-accent/20 to-transparent origin-top"
+            />
 
-            <div className="space-y-2">
+            <div className="space-y-3">
               {steps.map((step, index) => (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, x: 30 }}
+                  initial={{ opacity: 0, x: 40 }}
                   whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, margin: '-60px' }}
-                  transition={{ duration: 0.6, delay: index * 0.12, ease: [0.25, 0.46, 0.45, 0.94] }}
-                  className="group relative flex gap-6 p-6 rounded-2xl hover:bg-white/[0.02] transition-all duration-500"
+                  viewport={{ once: true, margin: '-50px' }}
+                  transition={{
+                    duration: 0.7,
+                    delay: index * 0.15,
+                    ease: [0.22, 1, 0.36, 1]
+                  }}
+                  className="group relative flex gap-6 p-6 rounded-2xl hover:bg-white/[0.03] transition-all duration-500"
                 >
-                  {/* Step number dot */}
-                  <div className="relative z-10 flex-shrink-0">
-                    <div className="w-[46px] h-[46px] rounded-full bg-surface-800 border border-white/[0.08] group-hover:border-accent/30 flex items-center justify-center transition-all duration-500">
-                      <span className="text-xs font-bold text-surface-400 group-hover:text-accent transition-colors duration-300">
+                  {/* Step number */}
+                  <motion.div
+                    className="relative z-10 flex-shrink-0"
+                    whileHover={{ scale: 1.1 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  >
+                    {/* Glow effect on hover */}
+                    <motion.div
+                      className="absolute inset-0 rounded-full bg-accent/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    />
+
+                    <div className="relative w-[46px] h-[46px] rounded-full bg-surface-800 border-2 border-white/[0.08] group-hover:border-accent/50 flex items-center justify-center transition-all duration-500">
+                      <span className="text-sm font-bold text-surface-400 group-hover:text-accent transition-colors duration-300">
                         {step.number}
                       </span>
                     </div>
-                  </div>
+                  </motion.div>
 
-                  {/* Content */}
-                  <div className="pt-2">
-                    <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-accent transition-colors duration-300">
+                  {/* Content with stagger animation */}
+                  <motion.div
+                    className="pt-2 flex-1"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.15 + 0.2, duration: 0.5 }}
+                  >
+                    <motion.h3
+                      className="text-xl font-semibold text-white mb-3 group-hover:text-accent transition-colors duration-300"
+                      whileHover={{ x: 4 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    >
                       {step.title}
-                    </h3>
+                    </motion.h3>
                     <p className="text-sm text-surface-400 leading-relaxed">
                       {step.description}
                     </p>
-                  </div>
+                  </motion.div>
                 </motion.div>
               ))}
             </div>

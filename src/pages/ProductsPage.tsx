@@ -1,13 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 import { useProducts } from '../context/ProductContext';
 import { useCategories } from '../context/CategoryContext';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { FaFilter, FaTimes, FaSlidersH } from 'react-icons/fa';
+import { FaFilter, FaTimes } from 'react-icons/fa';
 
 const ProductsPage: React.FC = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
@@ -63,9 +63,8 @@ const ProductsPage: React.FC = () => {
       <div className="min-h-screen bg-surface-900 flex flex-col">
         <Header />
         <div className="flex-1 flex items-center justify-center pt-16">
-          <LoadingSpinner text="Loading products..." />
+          <LoadingSpinner text="Loading products..." fullScreen />
         </div>
-        <Footer />
       </div>
     );
   }
@@ -86,17 +85,24 @@ const ProductsPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-surface-900 flex flex-col">
         <Header />
-        <div className="flex-1 flex items-center justify-center px-6">
-          <div className="text-center">
-            <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center">
-              <span className="text-4xl opacity-30">📦</span>
+        <div className="flex-1 flex items-center justify-center px-6 pt-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center"
+          >
+            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-accent/10 border border-accent/30 flex items-center justify-center">
+              <span className="text-4xl">📦</span>
             </div>
             <h1 className="text-2xl font-bold text-white mb-3">Category Not Found</h1>
             <p className="text-surface-400 text-sm mb-8">The category you requested does not exist.</p>
-            <Link to="/shop" className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-accent text-white text-sm font-semibold hover:shadow-[0_0_30px_rgba(230,57,70,0.25)] transition-all duration-300">
+            <Link
+              to="/shop"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-accent text-white font-semibold hover:shadow-[0_0_30px_rgba(230,57,70,0.4)] transition-all duration-300 hover:scale-105"
+            >
               Back to Shop
             </Link>
-          </div>
+          </motion.div>
         </div>
         <Footer />
       </div>
@@ -118,197 +124,206 @@ const ProductsPage: React.FC = () => {
     { value: 'rating', label: 'Top Rated' },
   ];
 
-  const soundOptions = ['', 'Low', 'Medium', 'High'];
+  const soundOptions = [
+    { value: '', label: 'All Sounds' },
+    { value: 'Low', label: 'Low' },
+    { value: 'Medium', label: 'Medium' },
+    { value: 'High', label: 'High' },
+  ];
 
   return (
-    <div className="min-h-screen bg-surface-900 flex flex-col">
+    <div className="min-h-screen bg-surface-900">
       <Header />
-      <div className="flex-1 max-w-7xl mx-auto w-full px-6 pt-28 pb-16">
-        {/* Page Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="mb-12"
-        >
-          {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-xs text-surface-500 mb-5">
-            <Link to="/" className="hover:text-white transition-colors">Home</Link>
-            <span>/</span>
-            <Link to="/shop" className="hover:text-white transition-colors">Shop</Link>
-            {category && (
-              <>
-                <span>/</span>
-                <span className="text-surface-300">{category.name}</span>
-              </>
-            )}
-          </div>
-
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-            <div>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-[-0.02em] mb-2">
-                {category?.name || 'All Products'}
-              </h1>
-              <p className="text-surface-400 text-[15px]">
-                {category?.description || 'Browse our complete collection of premium crackers.'}
-              </p>
+      <main className="pt-20 pb-16">
+        {/* Breadcrumb */}
+        <div className="border-b border-surface-700">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+            <div className="flex items-center gap-2 text-sm">
+              <Link to="/" className="text-surface-400 hover:text-white transition-colors">
+                Home
+              </Link>
+              <span className="text-surface-600">/</span>
+              <Link to="/shop" className="text-surface-400 hover:text-white transition-colors">
+                Shop
+              </Link>
+              {category && (
+                <>
+                  <span className="text-surface-600">/</span>
+                  <span className="text-white">{category.name}</span>
+                </>
+              )}
             </div>
-            <span className="text-sm text-surface-500 flex-shrink-0">
-              {filteredAndSortedProducts.length} product{filteredAndSortedProducts.length !== 1 ? 's' : ''}
-            </span>
-          </div>
-        </motion.div>
-
-        {/* Toolbar */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.15 }}
-          className="flex flex-wrap items-center justify-between gap-4 mb-8 pb-8 border-b border-white/[0.04]"
-        >
-          {/* Sort pills */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[11px] font-semibold text-surface-500 uppercase tracking-wider mr-1">Sort:</span>
-            {sortOptions.map((s) => (
-              <button
-                key={s.value}
-                onClick={() => setSortBy(s.value)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-300 ${sortBy === s.value
-                    ? 'bg-white text-surface-900'
-                    : 'bg-white/[0.03] text-surface-400 border border-white/[0.06] hover:bg-white/[0.06] hover:text-white'
-                  }`}
-              >
-                {s.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Sound + filter toggle */}
-          <div className="flex items-center gap-2">
-            {soundOptions.map((level) => (
-              <button
-                key={level}
-                onClick={() => setSoundLevel(level)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-300 ${soundLevel === level
-                    ? 'bg-white text-surface-900'
-                    : 'bg-white/[0.03] text-surface-400 border border-white/[0.06] hover:bg-white/[0.06] hover:text-white'
-                  }`}
-              >
-                {level || 'All Sounds'}
-              </button>
-            ))}
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="lg:hidden ml-2 w-9 h-9 rounded-full bg-white/[0.03] border border-white/[0.06] flex items-center justify-center text-surface-400 hover:text-white transition-colors"
-            >
-              <FaSlidersH size={12} />
-            </button>
-          </div>
-        </motion.div>
-
-        <div className="flex gap-8">
-          {/* Desktop Sidebar Filters */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="hidden lg:block w-60 flex-shrink-0"
-          >
-            <div className="sticky top-28 p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
-              <h3 className="text-sm font-semibold text-white mb-6 flex items-center gap-2">
-                <FaSlidersH size={12} className="text-surface-400" /> Filters
-              </h3>
-
-              {/* Sort */}
-              <div className="mb-6">
-                <label className="block text-[11px] font-semibold text-surface-400 uppercase tracking-[0.15em] mb-2.5">Sort By</label>
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white text-sm focus:border-accent/40 focus:outline-none transition-all appearance-none"
-                >
-                  <option value="name">Name</option>
-                  <option value="price">Price: Low to High</option>
-                  <option value="price-desc">Price: High to Low</option>
-                  <option value="rating">Rating</option>
-                </select>
-              </div>
-
-              {/* Price */}
-              <div className="mb-6">
-                <label className="block text-[11px] font-semibold text-surface-400 uppercase tracking-[0.15em] mb-2.5">Max Price</label>
-                <p className="text-sm text-white font-medium mb-3">₹0 — ₹{priceRange.max}</p>
-                <input
-                  type="range"
-                  min="0"
-                  max="1000"
-                  step="10"
-                  value={priceRange.max}
-                  onChange={(e) => setPriceRange(prev => ({ ...prev, max: parseInt(e.target.value) }))}
-                  className="w-full accent-accent"
-                />
-              </div>
-
-              {/* Sound Level */}
-              <div className="mb-6">
-                <label className="block text-[11px] font-semibold text-surface-400 uppercase tracking-[0.15em] mb-2.5">Sound Level</label>
-                <select
-                  value={soundLevel}
-                  onChange={(e) => setSoundLevel(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white text-sm focus:border-accent/40 focus:outline-none transition-all appearance-none"
-                >
-                  <option value="">All Levels</option>
-                  <option value="Low">Low</option>
-                  <option value="Medium">Medium</option>
-                  <option value="High">High</option>
-                  <option value="Mixed">Mixed</option>
-                </select>
-              </div>
-
-              <button
-                onClick={clearFilters}
-                className="w-full py-2.5 rounded-xl text-xs font-semibold text-surface-400 border border-white/[0.06] hover:text-white hover:border-white/[0.12] transition-all duration-300"
-              >
-                Clear All Filters
-              </button>
-            </div>
-          </motion.div>
-
-          {/* Products Grid */}
-          <div className="flex-1 min-w-0">
-            {filteredAndSortedProducts.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
-                {filteredAndSortedProducts.map((product, index) => (
-                  <ProductCard key={product.id} product={product} index={index} />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-24">
-                <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center">
-                  <span className="text-4xl opacity-30">📦</span>
-                </div>
-                <h3 className="text-xl font-semibold text-white mb-2">
-                  {categoryHasNoProducts ? `No Products in ${category?.name}` : (allProductsEmpty ? 'No Products' : 'No matches found')}
-                </h3>
-                <p className="text-surface-400 text-sm mb-8">
-                  {(categoryHasNoProducts || allProductsEmpty)
-                    ? 'Check back later or browse other categories.'
-                    : 'Try adjusting your filters to find what you\'re looking for.'}
-                </p>
-                {!(categoryHasNoProducts || allProductsEmpty) ? (
-                  <button onClick={clearFilters} className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-accent text-white text-sm font-semibold hover:shadow-[0_0_30px_rgba(230,57,70,0.25)] transition-all duration-300">
-                    Clear Filters
-                  </button>
-                ) : (
-                  <Link to="/shop" className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-accent text-white text-sm font-semibold hover:shadow-[0_0_30px_rgba(230,57,70,0.25)] transition-all duration-300">
-                    Browse Categories
-                  </Link>
-                )}
-              </div>
-            )}
           </div>
         </div>
-      </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+          {/* Page Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8"
+          >
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+              {category?.name || 'All Products'}
+            </h1>
+            <p className="text-surface-400">
+              {category?.description || 'Multi-shot fireworks that launch effects repeatedly into the sky from a single box.'}
+            </p>
+          </motion.div>
+
+          {/* Results Bar */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="flex items-center justify-between mb-8"
+          >
+            <span className="text-surface-400">
+              <span className="text-white font-semibold">{filteredAndSortedProducts.length}</span> product
+              {filteredAndSortedProducts.length !== 1 ? 's' : ''} found
+            </span>
+
+            {/* Mobile Filter Toggle */}
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="lg:hidden flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-800 border border-surface-700 text-white hover:border-accent transition-colors"
+            >
+              <FaFilter size={14} />
+              Filters
+            </button>
+          </motion.div>
+
+          <div className="grid lg:grid-cols-4 gap-8">
+            {/* Products Grid */}
+            <div className="lg:col-span-3 lg:order-1">
+              {filteredAndSortedProducts.length > 0 ? (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                >
+                  {filteredAndSortedProducts.map((product, index) => (
+                    <ProductCard key={product.id} product={product} index={index} />
+                  ))}
+                </motion.div>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-center py-16"
+                >
+                  <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-accent/10 border border-accent/30 flex items-center justify-center">
+                    <span className="text-4xl">📦</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-2">
+                    {categoryHasNoProducts
+                      ? `No Products in ${category?.name}`
+                      : allProductsEmpty
+                      ? 'No Products'
+                      : 'No matches found'}
+                  </h3>
+                  <p className="text-surface-400 mb-8">
+                    {categoryHasNoProducts || allProductsEmpty
+                      ? 'Check back later or browse other categories.'
+                      : 'Try adjusting your filters to find what you\'re looking for.'}
+                  </p>
+                  {!(categoryHasNoProducts || allProductsEmpty) ? (
+                    <button
+                      onClick={clearFilters}
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-accent text-white font-semibold hover:shadow-[0_0_30px_rgba(230,57,70,0.4)] transition-all duration-300 hover:scale-105"
+                    >
+                      Clear Filters
+                    </button>
+                  ) : (
+                    <Link
+                      to="/shop"
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-accent text-white font-semibold hover:shadow-[0_0_30px_rgba(230,57,70,0.4)] transition-all duration-300 hover:scale-105"
+                    >
+                      Browse Categories
+                    </Link>
+                  )}
+                </motion.div>
+              )}
+            </div>
+
+            {/* Sidebar Filters */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className={`lg:col-span-1 lg:order-2 ${showFilters ? 'block' : 'hidden lg:block'}`}
+            >
+              <div className="sticky top-24 bg-surface-800/50 border border-surface-700 rounded-xl p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                    <FaFilter size={16} />
+                    Filters
+                  </h3>
+                  <button
+                    onClick={() => setShowFilters(false)}
+                    className="lg:hidden text-surface-400 hover:text-white"
+                  >
+                    <FaTimes size={16} />
+                  </button>
+                </div>
+
+                {/* Sort By */}
+                <div className="mb-6">
+                  <label className="block text-sm font-semibold text-surface-400 mb-3">SORT BY</label>
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="w-full px-4 py-2.5 rounded-lg bg-surface-800 border border-surface-700 text-white text-sm focus:border-accent focus:outline-none"
+                  >
+                    {sortOptions.map(option => (
+                      <option key={option.value} value={option.value}>{option.label}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Price Range */}
+                <div className="mb-6">
+                  <label className="block text-sm font-semibold text-surface-400 mb-3">MAX PRICE</label>
+                  <p className="text-white font-semibold mb-3">₹0 — ₹{priceRange.max}</p>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1000"
+                    step="10"
+                    value={priceRange.max}
+                    onChange={(e) => setPriceRange(prev => ({ ...prev, max: parseInt(e.target.value) }))}
+                    className="w-full h-2 bg-surface-700 rounded-lg appearance-none cursor-pointer accent-accent"
+                  />
+                </div>
+
+                {/* Sound Level */}
+                <div className="mb-6">
+                  <label className="block text-sm font-semibold text-surface-400 mb-3">SOUND LEVEL</label>
+                  <select
+                    value={soundLevel}
+                    onChange={(e) => setSoundLevel(e.target.value)}
+                    className="w-full px-4 py-2.5 rounded-lg bg-surface-800 border border-surface-700 text-white text-sm focus:border-accent focus:outline-none"
+                  >
+                    {soundOptions.map(option => (
+                      <option key={option.value} value={option.value}>{option.label}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Clear Filters */}
+                <button
+                  onClick={clearFilters}
+                  className="w-full py-2.5 rounded-lg text-sm font-semibold text-surface-400 border border-surface-700 hover:text-white hover:border-accent transition-all"
+                >
+                  Clear All Filters
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </main>
       <Footer />
     </div>
   );
